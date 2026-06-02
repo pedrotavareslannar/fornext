@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fornext — Acesso Fornecedor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#2563eb;--blue-dark:#1e40af;--blue-bg:#eff6ff;--blue-border:#bfdbfe;
+  --ink:#111110;--ink2:#6b7280;--ink3:#9ca3af;
+  --bg:#ffffff;--bg2:#f9fafb;--bg3:#f3f4f6;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-border:#bbf7d0;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --r:8px;--font:'Inter',system-ui,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg2);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+
+/* NAV */
+nav{background:var(--bg);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 24px}
+.nav-logo{display:flex;align-items:center;gap:7px;text-decoration:none}
+.nav-logo-icon{width:28px;height:28px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.nav-logo-text{font-size:14px;font-weight:700;letter-spacing:-0.03em;color:var(--ink)}
+.nav-logo-text em{font-style:normal;color:var(--blue)}
+.nav-right{margin-left:auto;font-size:12px;color:var(--ink2)}
+.nav-right a{color:var(--blue);font-weight:600;text-decoration:none}
+
+/* LAYOUT */
+.page{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 24px}
+.box{width:100%;max-width:400px}
+
+/* HEADER */
+.box-header{text-align:center;margin-bottom:28px}
+.box-icon{width:48px;height:48px;background:var(--blue);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px}
+.box-header h1{font-size:20px;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px}
+.box-header p{font-size:13px;color:var(--ink2);line-height:1.6}
+
+/* TABS */
+.tabs{display:flex;background:var(--bg3);border-radius:var(--r);padding:4px;margin-bottom:20px}
+.tab{flex:1;padding:8px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--ink2);transition:all .15s;font-family:var(--font)}
+.tab.active{background:var(--bg);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+/* CARD */
+.card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px}
+
+/* FORM */
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.field label{font-size:11px;font-weight:600;color:var(--ink);letter-spacing:.02em}
+.field label span{color:var(--red);margin-left:2px}
+.field input,.field select{padding:10px 12px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg);color:var(--ink);font-size:13px;font-family:var(--font);outline:none;transition:border-color .15s;width:100%}
+.field input:focus,.field select:focus{border-color:var(--blue)}
+.field input::placeholder{color:var(--ink3)}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:32px}
+
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:12px;margin:16px 0}
+.divider-line{flex:1;height:1px;background:var(--border)}
+.divider-text{font-size:11px;color:var(--ink3)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 20px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .15s;width:100%;text-decoration:none}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:var(--blue-dark)}
+.btn-blue:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--ink2);border:1.5px solid var(--border2)}
+.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ERROR */
+.error-box{background:var(--red-bg);border:1px solid #fecaca;border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:14px;display:none}
+.success-box{background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--green);margin-bottom:14px;display:none}
+
+/* FOOTER */
+.box-footer{text-align:center;margin-top:16px;font-size:12px;color:var(--ink3)}
+.box-footer a{color:var(--blue);font-weight:600;text-decoration:none}
+
+.form-section{display:none}
+.form-section.active{display:block}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <rect x="2" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+        <rect x="9" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+        <rect x="2" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+        <rect x="9" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">For<em>next</em></span>
+  </a>
+  <div class="nav-right">Sou comprador? <a href="login-comprador.html">Acesse aqui</a></div>
+</nav>
+
+<div class="page">
+  <div class="box">
+
+    <div class="box-header">
+      <div class="box-icon">🏭</div>
+      <h1>Área do Fornecedor</h1>
+      <p>Acesse sua conta para gerenciar RFQs e propostas</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">Entrar</button>
+      <button class="tab" onclick="switchTab('cadastro')">Criar conta</button>
+    </div>
+
+    <div class="card">
+      <div class="error-box" id="error-box"></div>
+      <div class="success-box" id="success-box"></div>
+
+      <!-- LOGIN -->
+      <div class="form-section active" id="section-login">
+        <div class="field">
+          <label>E-mail <span>*</span></label>
+          <input type="email" id="login-email" placeholder="seu@email.com.br">
+        </div>
+        <div class="field">
+          <label>Senha <span>*</span></label>
+          <input type="password" id="login-senha" placeholder="Sua senha" onkeydown="if(event.key==='Enter')entrar()">
+        </div>
+        <div style="text-align:right;margin:-8px 0 14px">
+          <a href="#" style="font-size:11px;color:var(--blue);text-decoration:none" onclick="esqueceuSenha()">Esqueci minha senha</a>
+        </div>
+        <button class="btn btn-blue" id="btn-login" onclick="entrar()">
+          <span id="btn-login-text">Entrar</span>
+        </button>
+      </div>
+
+      <!-- CADASTRO -->
+      <div class="form-section" id="section-cadastro">
+        <div class="field">
+          <label>Nome da empresa <span>*</span></label>
+          <input type="text" id="cad-nome" placeholder="Confecções Paulista Ltda">
+        </div>
+        <div class="field-row">
+          <div class="field" style="margin:0">
+            <label>E-mail <span>*</span></label>
+            <input type="email" id="cad-email" placeholder="contato@empresa.com">
+          </div>
+          <div class="field" style="margin:0">
+            <label>Telefone <span>*</span></label>
+            <input type="tel" id="cad-telefone" placeholder="(11) 99999-9999">
+          </div>
+        </div>
+        <div class="field-row" style="margin-top:14px">
+          <div class="field" style="margin:0">
+            <label>Cidade <span>*</span></label>
+            <input type="text" id="cad-cidade" placeholder="São Paulo">
+          </div>
+          <div class="field" style="margin:0">
+            <label>Estado <span>*</span></label>
+            <select id="cad-estado">
+              <option value="">UF</option>
+              <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+              <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+              <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+              <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+              <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+              <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+              <option selected>SP</option><option>SE</option><option>TO</option>
+            </select>
+          </div>
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label>Categoria principal <span>*</span></label>
+          <select id="cad-categoria">
+            <option value="">Selecione</option>
+            <option>Uniformes Corporativos</option>
+            <option>EPI</option>
+            <option>Tintas Industriais</option>
+            <option>MRO</option>
+            <option>Embalagens</option>
+            <option>Limpeza e Higiene</option>
+            <option>Material de Escritório</option>
+            <option>TI e Periféricos</option>
+            <option>Alimentação Corporativa</option>
+            <option>Facilities</option>
+            <option>Logística</option>
+            <option>Materiais Elétricos</option>
+          </select>
+        </div>
+        <div class="divider">
+          <div class="divider-line"></div>
+          <div class="divider-text">Dados de acesso</div>
+          <div class="divider-line"></div>
+        </div>
+        <div class="field-row">
+          <div class="field" style="margin:0">
+            <label>Senha <span>*</span></label>
+            <input type="password" id="cad-senha" placeholder="Mínimo 6 caracteres">
+          </div>
+          <div class="field" style="margin:0">
+            <label>Confirmar senha <span>*</span></label>
+            <input type="password" id="cad-senha2" placeholder="Repita a senha">
+          </div>
+        </div>
+        <button class="btn btn-blue" id="btn-cad" style="margin-top:16px" onclick="cadastrar()">
+          <span id="btn-cad-text">Criar conta</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="box-footer">
+      Sou comprador — <a href="login-comprador.html">acessar área do comprador</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://xnpvysulxouzxqdqhwuq.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucHZ5c3VseG91enhxZHFod3VxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzOTU0MjgsImV4cCI6MjA5NTk3MTQyOH0.dmQRu68NfNq2nSN3YAszVR9u7yf4YgyevindTBWIYV8';
+
+// Checa se já está logado
+const session = JSON.parse(localStorage.getItem('fornext_fornecedor')||'null');
+if(session?.access_token) window.location.href='painel-fornecedor.html';
+
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('section-'+tab).classList.add('active');
+  hideMessages();
+}
+
+function showError(msg){ const el=document.getElementById('error-box'); el.textContent=msg; el.style.display='block'; document.getElementById('success-box').style.display='none'; }
+function showSuccess(msg){ const el=document.getElementById('success-box'); el.textContent=msg; el.style.display='block'; document.getElementById('error-box').style.display='none'; }
+function hideMessages(){ document.getElementById('error-box').style.display='none'; document.getElementById('success-box').style.display='none'; }
+function val(id){ return document.getElementById(id)?.value?.trim()||''; }
+
+async function entrar(){
+  const email=val('login-email'), senha=val('login-senha');
+  if(!email||!senha){ showError('Preencha e-mail e senha.'); return; }
+
+  const btn=document.getElementById('btn-login');
+  const btnText=document.getElementById('btn-login-text');
+  btn.disabled=true; btnText.innerHTML='<span class="spinner"></span> Entrando...';
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+      body: JSON.stringify({email, password:senha})
+    });
+    const data = await res.json();
+    if(!res.ok){ showError(data.error_description||'E-mail ou senha incorretos.'); btn.disabled=false; btnText.textContent='Entrar'; return; }
+
+    // Busca dados do fornecedor
+    const resForn = await fetch(`${SUPABASE_URL}/rest/v1/fornecedores?user_id=eq.${data.user.id}&select=*`,{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${data.access_token}`}
+    });
+    const fornList = await resForn.json();
+
+    localStorage.setItem('fornext_fornecedor', JSON.stringify({
+      access_token: data.access_token,
+      user_id: data.user.id,
+      fornecedor: fornList[0]||null
+    }));
+
+    window.location.href='painel-fornecedor.html';
+
+  } catch(e){ showError('Erro de conexão. Tente novamente.'); btn.disabled=false; btnText.textContent='Entrar'; }
+}
+
+async function cadastrar(){
+  const nome=val('cad-nome'), email=val('cad-email'), telefone=val('cad-telefone');
+  const cidade=val('cad-cidade'), estado=val('cad-estado'), categoria=val('cad-categoria');
+  const senha=val('cad-senha'), senha2=val('cad-senha2');
+
+  if(!nome||!email||!telefone||!cidade||!estado||!categoria||!senha){ showError('Preencha todos os campos.'); return; }
+  if(senha.length<6){ showError('A senha deve ter pelo menos 6 caracteres.'); return; }
+  if(senha!==senha2){ showError('As senhas não coincidem.'); return; }
+
+  const btn=document.getElementById('btn-cad');
+  const btnText=document.getElementById('btn-cad-text');
+  btn.disabled=true; btnText.innerHTML='<span class="spinner"></span> Criando conta...';
+
+  try {
+    // Cria usuário no Auth
+    const resAuth = await fetch(`${SUPABASE_URL}/auth/v1/signup`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+      body: JSON.stringify({email, password:senha})
+    });
+    const authData = await resAuth.json();
+    if(!resAuth.ok){ showError(authData.error_description||'Erro ao criar conta.'); btn.disabled=false; btnText.textContent='Criar conta'; return; }
+
+    const userId = authData.user?.id;
+    const token = authData.access_token;
+
+    // Cria fornecedor vinculado ao user_id
+    await fetch(`${SUPABASE_URL}/rest/v1/fornecedores`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${token}`},
+      body: JSON.stringify({nome, email, telefone, cidade, estado, categoria, user_id:userId})
+    });
+
+    // Busca o fornecedor criado
+    const resForn = await fetch(`${SUPABASE_URL}/rest/v1/fornecedores?user_id=eq.${userId}&select=*`,{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${token}`}
+    });
+    const fornList = await resForn.json();
+
+    localStorage.setItem('fornext_fornecedor', JSON.stringify({
+      access_token: token,
+      user_id: userId,
+      fornecedor: fornList[0]||null
+    }));
+
+    window.location.href='painel-fornecedor.html';
+
+  } catch(e){ showError('Erro de conexão. Tente novamente.'); btn.disabled=false; btnText.textContent='Criar conta'; }
+}
+
+async function esqueceuSenha(){
+  const email = prompt('Digite seu e-mail para receber o link de redefinição:');
+  if(!email) return;
+  await fetch(`${SUPABASE_URL}/auth/v1/recover`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    body: JSON.stringify({email})
+  });
+  showSuccess('Se o e-mail estiver cadastrado, você receberá o link em breve.');
+}
+</script>
+</body>
+</html>

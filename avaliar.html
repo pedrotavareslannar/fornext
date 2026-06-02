@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fornext — Avaliar Fornecedor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#2563eb;--blue-dark:#1e40af;--blue-bg:#eff6ff;--blue-border:#bfdbfe;
+  --ink:#111110;--ink2:#6b7280;--ink3:#9ca3af;
+  --bg:#ffffff;--bg2:#f9fafb;--bg3:#f3f4f6;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-border:#bbf7d0;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-border:#fde68a;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --r:8px;--font:'Inter',system-ui,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg2);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+
+nav{background:var(--bg);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 24px;position:sticky;top:0;z-index:50}
+.nav-logo{display:flex;align-items:center;gap:7px;text-decoration:none}
+.nav-logo-icon{width:28px;height:28px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.nav-logo-text{font-size:14px;font-weight:700;letter-spacing:-0.03em;color:var(--ink)}
+.nav-logo-text em{font-style:normal;color:var(--blue)}
+.nav-back{margin-left:auto;font-size:12px;color:var(--ink2);text-decoration:none}
+.nav-back:hover{color:var(--blue)}
+
+.page{max-width:520px;margin:0 auto;padding:40px 24px 80px}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:22px;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px}
+.page-header p{font-size:13px;color:var(--ink2);line-height:1.6}
+
+/* FORNECEDOR INFO */
+.forn-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:18px 20px;display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.forn-avatar{width:44px;height:44px;border-radius:10px;background:var(--blue-bg);border:1px solid var(--blue-border);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.forn-info{flex:1}
+.forn-name{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.forn-meta{font-size:11px;color:var(--ink3)}
+
+/* CARD */
+.card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:14px}
+.card-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:18px}
+
+/* STAR RATING */
+.rating-section{margin-bottom:20px}
+.rating-label{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.rating-sub{font-size:11px;color:var(--ink2);margin-bottom:12px}
+.stars-row{display:flex;gap:6px;align-items:center}
+.star-btn{font-size:28px;cursor:pointer;transition:transform .1s;background:none;border:none;padding:2px;line-height:1;filter:grayscale(1);opacity:.4}
+.star-btn.active{filter:none;opacity:1}
+.star-btn:hover{transform:scale(1.15)}
+.rating-value{font-size:13px;font-weight:700;color:var(--ink);margin-left:8px}
+.rating-text{font-size:11px;color:var(--ink2);margin-left:4px}
+
+/* CRITERIOS */
+.criterios{display:flex;flex-direction:column;gap:16px;margin-bottom:4px}
+.criterio{display:flex;flex-direction:column;gap:6px}
+.criterio-header{display:flex;justify-content:space-between;align-items:center}
+.criterio-label{font-size:12px;font-weight:600;color:var(--ink)}
+.criterio-nota{font-size:12px;font-weight:700;color:var(--blue)}
+.criterio-stars{display:flex;gap:4px}
+.cstar{font-size:18px;cursor:pointer;filter:grayscale(1);opacity:.35;transition:all .1s;background:none;border:none;padding:1px;line-height:1}
+.cstar.active{filter:none;opacity:1}
+.cstar:hover{transform:scale(1.1)}
+
+/* CAMPO */
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:0}
+.field label{font-size:11px;font-weight:600;color:var(--ink);letter-spacing:.02em}
+.field textarea{padding:10px 12px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg);color:var(--ink);font-size:13px;font-family:var(--font);outline:none;transition:border-color .15s;width:100%;resize:vertical;min-height:90px;line-height:1.5}
+.field textarea:focus{border-color:var(--blue)}
+.field textarea::placeholder{color:var(--ink3)}
+
+/* RECOMENDA */
+.recomenda-row{display:flex;gap:8px;margin-top:2px}
+.rec-btn{flex:1;padding:10px 12px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .15s;text-align:center;color:var(--ink2)}
+.rec-btn:hover{border-color:var(--border);color:var(--ink)}
+.rec-btn.active-sim{border-color:var(--green);background:var(--green-bg);color:var(--green)}
+.rec-btn.active-nao{border-color:var(--red);background:var(--red-bg);color:var(--red)}
+
+/* NOTA GERAL PREVIEW */
+.nota-preview{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.nota-preview-label{font-size:12px;color:var(--ink2)}
+.nota-preview-num{font-size:20px;font-weight:700;color:var(--blue);letter-spacing:-0.03em}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 20px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .15s;width:100%}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:var(--blue-dark)}
+.btn-blue:disabled{opacity:.5;cursor:not-allowed}
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* SUCCESS */
+.success-screen{text-align:center;padding:40px 16px}
+.success-icon{width:56px;height:56px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:24px}
+.success-screen h2{font-size:20px;font-weight:700;letter-spacing:-0.02em;margin-bottom:8px}
+.success-screen p{font-size:13px;color:var(--ink2);line-height:1.7;max-width:340px;margin:0 auto 24px}
+.success-nota{font-size:40px;font-weight:700;color:var(--green);letter-spacing:-0.04em;margin:16px 0}
+.success-actions{display:flex;flex-direction:column;gap:8px;max-width:300px;margin:0 auto}
+.success-btn{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;font-size:12px;color:var(--ink2);text-decoration:none;transition:border-color .15s;font-weight:500}
+.success-btn:hover{border-color:var(--blue);color:var(--blue)}
+
+.step{display:none}
+.step.active{display:block}
+
+@media(max-width:500px){
+  .recomenda-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <rect x="2" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+        <rect x="9" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+        <rect x="2" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+        <rect x="9" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">For<em>next</em></span>
+  </a>
+  <a href="propostas.html" class="nav-back">← Minhas propostas</a>
+</nav>
+
+<div class="page">
+
+  <!-- STEP FORM -->
+  <div class="step active" id="step-form">
+    <div class="page-header">
+      <h1>Avaliar fornecedor</h1>
+      <p>Sua avaliação ajuda outros compradores a tomar melhores decisões e melhora o ranking da plataforma.</p>
+    </div>
+
+    <!-- FORNECEDOR -->
+    <div class="forn-card" id="forn-card">
+      <div class="forn-avatar" id="forn-emoji">🏭</div>
+      <div class="forn-info">
+        <div class="forn-name" id="forn-name">Carregando...</div>
+        <div class="forn-meta" id="forn-meta">—</div>
+      </div>
+    </div>
+
+    <!-- NOTA GERAL -->
+    <div class="card">
+      <div class="card-title">Nota geral</div>
+      <div class="rating-section">
+        <div class="rating-label">Como foi sua experiência geral?</div>
+        <div class="rating-sub">Clique nas estrelas para avaliar de 1 a 10</div>
+        <div class="stars-row" id="stars-geral">
+          <button class="star-btn" data-n="2" onclick="setNota(2)">⭐</button>
+          <button class="star-btn" data-n="4" onclick="setNota(4)">⭐</button>
+          <button class="star-btn" data-n="6" onclick="setNota(6)">⭐</button>
+          <button class="star-btn" data-n="8" onclick="setNota(8)">⭐</button>
+          <button class="star-btn" data-n="10" onclick="setNota(10)">⭐</button>
+          <span class="rating-value" id="nota-label">—</span>
+          <span class="rating-text" id="nota-desc"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CRITÉRIOS -->
+    <div class="card">
+      <div class="card-title">Avaliação por critério</div>
+      <div class="criterios">
+        <div class="criterio">
+          <div class="criterio-header">
+            <div class="criterio-label">📦 Qualidade do produto/serviço</div>
+            <div class="criterio-nota" id="nota-qualidade">—</div>
+          </div>
+          <div class="criterio-stars" id="stars-qualidade">
+            ${[2,4,6,8,10].map(n=>`<button class="cstar" data-n="${n}" onclick="setCriterio('qualidade',${n})">⭐</button>`).join('')}
+          </div>
+        </div>
+        <div class="criterio">
+          <div class="criterio-header">
+            <div class="criterio-label">⏱ Cumprimento do prazo</div>
+            <div class="criterio-nota" id="nota-prazo">—</div>
+          </div>
+          <div class="criterio-stars" id="stars-prazo">
+            ${[2,4,6,8,10].map(n=>`<button class="cstar" data-n="${n}" onclick="setCriterio('prazo',${n})">⭐</button>`).join('')}
+          </div>
+        </div>
+        <div class="criterio">
+          <div class="criterio-header">
+            <div class="criterio-label">💬 Comunicação e atendimento</div>
+            <div class="criterio-nota" id="nota-comunicacao">—</div>
+          </div>
+          <div class="criterio-stars" id="stars-comunicacao">
+            ${[2,4,6,8,10].map(n=>`<button class="cstar" data-n="${n}" onclick="setCriterio('comunicacao',${n})">⭐</button>`).join('')}
+          </div>
+        </div>
+        <div class="criterio">
+          <div class="criterio-header">
+            <div class="criterio-label">💰 Custo-benefício</div>
+            <div class="criterio-nota" id="nota-custo">—</div>
+          </div>
+          <div class="criterio-stars" id="stars-custo">
+            ${[2,4,6,8,10].map(n=>`<button class="cstar" data-n="${n}" onclick="setCriterio('custo',${n})">⭐</button>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMENTÁRIO -->
+    <div class="card">
+      <div class="card-title">Comentário</div>
+      <div class="field">
+        <label>Conte como foi a experiência (opcional)</label>
+        <textarea id="comentario" placeholder="Ex: Entrega no prazo, produto de boa qualidade, atendimento rápido pelo WhatsApp..."></textarea>
+      </div>
+      <div style="margin-top:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:8px">Você recomendaria este fornecedor?</div>
+        <div class="recomenda-row">
+          <button class="rec-btn" id="rec-sim" onclick="setRecomenda(true)">👍 Sim, recomendo</button>
+          <button class="rec-btn" id="rec-nao" onclick="setRecomenda(false)">👎 Não recomendo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREVIEW NOTA -->
+    <div class="nota-preview" id="nota-preview" style="display:none">
+      <span class="nota-preview-label">Nota final calculada</span>
+      <span class="nota-preview-num" id="nota-final-preview">—</span>
+    </div>
+
+    <button class="btn btn-blue" id="btn-avaliar" onclick="enviarAvaliacao()">
+      <span id="btn-text">Enviar avaliação</span>
+    </button>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="step" id="step-success">
+    <div class="card">
+      <div class="success-screen">
+        <div class="success-icon">⭐</div>
+        <h2>Avaliação enviada!</h2>
+        <p>Obrigado pelo seu feedback. A nota já foi atualizada no ranking do fornecedor.</p>
+        <div class="success-nota" id="success-nota">—</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:24px">Sua nota final</div>
+        <div class="success-actions">
+          <a href="propostas.html" class="success-btn">📊 Voltar para propostas</a>
+          <a href="fornecedores.html" class="success-btn">🔍 Ver ranking atualizado</a>
+          <a href="rfq.html" class="success-btn">📋 Enviar nova RFQ</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SUPABASE_URL = 'https://xnpvysulxouzxqdqhwuq.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucHZ5c3VseG91enhxZHFod3VxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzOTU0MjgsImV4cCI6MjA5NTk3MTQyOH0.dmQRu68NfNq2nSN3YAszVR9u7yf4YgyevindTBWIYV8';
+
+const catEmojis={
+  'Uniformes Corporativos':'👕','EPI':'🦺','Tintas Industriais':'🎨',
+  'MRO':'🔧','Embalagens':'📦','Limpeza e Higiene':'🧹',
+  'Material de Escritório':'📎','TI e Periféricos':'💻',
+  'Alimentação Corporativa':'🍽','Facilities':'🏢',
+  'Logística':'🚚','Materiais Elétricos':'⚡'
+};
+
+const notaTextos={2:'Péssimo',4:'Ruim',6:'Regular',8:'Bom',10:'Excelente'};
+const compradorId = localStorage.getItem('comprador_id')||null;
+const params = new URLSearchParams(window.location.search);
+const fornecedorId = params.get('fornecedor');
+const rfqId = params.get('rfq');
+const fornNome = params.get('nome')||'Fornecedor';
+
+let notaGeral = 0;
+let criterios = {qualidade:0, prazo:0, comunicacao:0, custo:0};
+let recomenda = null;
+let fornecedor = null;
+
+// Carrega dados do fornecedor
+async function init(){
+  if(!fornecedorId){ alert('Fornecedor não identificado.'); return; }
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/fornecedores?id=eq.${fornecedorId}&select=*`,{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+    });
+    const data = await res.json();
+    fornecedor = data[0];
+    if(fornecedor){
+      const emoji = catEmojis[fornecedor.categoria]||'🏭';
+      document.getElementById('forn-emoji').textContent = emoji;
+      document.getElementById('forn-name').textContent = fornecedor.nome;
+      document.getElementById('forn-meta').textContent = `${fornecedor.categoria} · ${fornecedor.cidade||''}${fornecedor.estado?', '+fornecedor.estado:''}`;
+    }
+  } catch(e){}
+}
+
+function setNota(n){
+  notaGeral = n;
+  document.querySelectorAll('#stars-geral .star-btn').forEach(s=>{
+    s.classList.toggle('active', Number(s.dataset.n) <= n);
+  });
+  document.getElementById('nota-label').textContent = n+'/10';
+  document.getElementById('nota-desc').textContent = notaTextos[n]||'';
+  atualizarPreview();
+}
+
+function setCriterio(crit, n){
+  criterios[crit] = n;
+  document.querySelectorAll(`#stars-${crit} .cstar`).forEach(s=>{
+    s.classList.toggle('active', Number(s.dataset.n) <= n);
+  });
+  document.getElementById(`nota-${crit}`).textContent = n+'/10';
+  atualizarPreview();
+}
+
+function setRecomenda(v){
+  recomenda = v;
+  document.getElementById('rec-sim').className = 'rec-btn'+(v===true?' active-sim':'');
+  document.getElementById('rec-nao').className = 'rec-btn'+(v===false?' active-nao':'');
+}
+
+function calcNotaFinal(){
+  const vals = [notaGeral, criterios.qualidade, criterios.prazo, criterios.comunicacao, criterios.custo].filter(v=>v>0);
+  if(!vals.length) return 0;
+  return Math.round((vals.reduce((a,b)=>a+b,0)/vals.length)*10)/10;
+}
+
+function atualizarPreview(){
+  const nota = calcNotaFinal();
+  if(nota > 0){
+    document.getElementById('nota-preview').style.display='flex';
+    document.getElementById('nota-final-preview').textContent = nota.toFixed(1)+'/10';
+  }
+}
+
+async function enviarAvaliacao(){
+  if(!notaGeral){ alert('Dê uma nota geral antes de enviar.'); return; }
+
+  const btn = document.getElementById('btn-avaliar');
+  const btnText = document.getElementById('btn-text');
+  btn.disabled=true;
+  btnText.innerHTML='<span class="spinner"></span> Enviando...';
+
+  const notaFinal = calcNotaFinal();
+  const comentario = document.getElementById('comentario').value.trim();
+
+  try {
+    // Salva avaliação
+    await fetch(`${SUPABASE_URL}/rest/v1/avaliacoes`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
+      body: JSON.stringify({
+        fornecedor_id: fornecedorId,
+        comprador_id: compradorId||null,
+        nota: notaFinal,
+        comentario: comentario||null
+      })
+    });
+
+    // Busca todas avaliações do fornecedor para recalcular média
+    const resAv = await fetch(`${SUPABASE_URL}/rest/v1/avaliacoes?fornecedor_id=eq.${fornecedorId}&select=nota`,{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+    });
+    const avaliacoes = await resAv.json();
+    const media = avaliacoes.reduce((a,b)=>a+Number(b.nota),0)/avaliacoes.length;
+    const mediaArred = Math.round(media*10)/10;
+
+    // Atualiza média e total no fornecedor
+    await fetch(`${SUPABASE_URL}/rest/v1/fornecedores?id=eq.${fornecedorId}`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
+      body: JSON.stringify({ avaliacao_media: mediaArred, total_avaliacoes: avaliacoes.length })
+    });
+
+    document.getElementById('success-nota').textContent = notaFinal.toFixed(1);
+    document.getElementById('step-form').classList.remove('active');
+    document.getElementById('step-success').classList.add('active');
+    window.scrollTo(0,0);
+
+  } catch(e){
+    alert('Erro ao enviar avaliação. Tente novamente.');
+    btn.disabled=false;
+    btnText.textContent='Enviar avaliação';
+  }
+}
+
+init();
+</script>
+</body>
+</html>

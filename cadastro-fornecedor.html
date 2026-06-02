@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fornext — Cadastro de Fornecedor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#2563eb;--blue-dark:#1e40af;--blue-bg:#eff6ff;--blue-border:#bfdbfe;
+  --ink:#111110;--ink2:#6b7280;--ink3:#9ca3af;
+  --bg:#ffffff;--bg2:#f9fafb;--bg3:#f3f4f6;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-border:#bbf7d0;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --r:8px;--font:'Inter',system-ui,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg2);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* NAV */
+nav{background:var(--bg);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 24px;position:sticky;top:0;z-index:50}
+.nav-logo{display:flex;align-items:center;gap:7px;text-decoration:none}
+.nav-logo-icon{width:28px;height:28px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-logo-text{font-size:14px;font-weight:700;letter-spacing:-0.03em;color:var(--ink)}
+.nav-logo-text em{font-style:normal;color:var(--blue)}
+.nav-back{margin-left:auto;font-size:12px;color:var(--ink2);text-decoration:none;display:flex;align-items:center;gap:4px;transition:color .15s}
+.nav-back:hover{color:var(--ink)}
+
+/* LAYOUT */
+.page{max-width:680px;margin:0 auto;padding:40px 24px 80px}
+
+/* HEADER */
+.page-header{margin-bottom:32px}
+.page-header h1{font-size:22px;font-weight:700;letter-spacing:-0.03em;color:var(--ink);margin-bottom:6px}
+.page-header p{font-size:13px;color:var(--ink2);line-height:1.6}
+
+/* PROGRESS */
+.progress{display:flex;align-items:center;gap:0;margin-bottom:32px}
+.prog-step{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600}
+.prog-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.prog-step.active .prog-num{background:var(--blue);color:#fff}
+.prog-step.done .prog-num{background:var(--green);color:#fff}
+.prog-step.inactive .prog-num{background:var(--bg3);color:var(--ink3)}
+.prog-step.active .prog-label{color:var(--ink)}
+.prog-step.done .prog-label{color:var(--green)}
+.prog-step.inactive .prog-label{color:var(--ink3)}
+.prog-line{flex:1;height:1px;background:var(--border);margin:0 8px}
+.prog-line.done{background:var(--green)}
+
+/* CARD */
+.card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:16px}
+.card-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.card-title-icon{font-size:16px}
+
+/* FORM */
+.field-grid{display:grid;gap:14px}
+.field-grid-2{grid-template-columns:1fr 1fr}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11px;font-weight:600;color:var(--ink);letter-spacing:.02em}
+.field label span{color:var(--red);margin-left:2px}
+.field input,.field select,.field textarea{
+  padding:9px 12px;border-radius:var(--r);border:1.5px solid var(--border2);
+  background:var(--bg);color:var(--ink);font-size:13px;font-family:var(--font);
+  outline:none;transition:border-color .15s;width:100%;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue)}
+.field input::placeholder,.field textarea::placeholder{color:var(--ink3)}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:32px}
+.field textarea{resize:vertical;min-height:80px;line-height:1.5}
+.field-hint{font-size:11px;color:var(--ink3);margin-top:2px}
+.field input.error,.field select.error,.field textarea.error{border-color:var(--red)}
+.field-error{font-size:11px;color:var(--red);margin-top:2px}
+
+/* CATEGORIES */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cat-option{border:1.5px solid var(--border);border-radius:var(--r);padding:10px 12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);font-weight:500;background:var(--bg)}
+.cat-option:hover{border-color:var(--blue-border);background:var(--blue-bg);color:var(--blue)}
+.cat-option.selected{border-color:var(--blue);background:var(--blue-bg);color:var(--blue)}
+.cat-option input{display:none}
+
+/* STATES */
+.estados-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.estado-option{border:1.5px solid var(--border);border-radius:6px;padding:6px 8px;cursor:pointer;transition:all .15s;font-size:11px;color:var(--ink2);font-weight:500;text-align:center;background:var(--bg)}
+.estado-option:hover{border-color:var(--blue-border);color:var(--blue)}
+.estado-option.selected{border-color:var(--blue);background:var(--blue-bg);color:var(--blue)}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:24px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .15s}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-dark)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--ink2);border:1.5px solid var(--border2)}
+.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+
+/* STEPS */
+.step{display:none}
+.step.active{display:block}
+
+/* SUCCESS */
+.success-screen{text-align:center;padding:48px 24px}
+.success-icon{width:56px;height:56px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:24px}
+.success-screen h2{font-size:20px;font-weight:700;letter-spacing:-0.02em;margin-bottom:8px}
+.success-screen p{font-size:13px;color:var(--ink2);line-height:1.7;max-width:380px;margin:0 auto 28px}
+.success-id{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;display:inline-flex;align-items:center;gap:8px;margin-bottom:28px}
+.success-id .label{font-size:11px;color:var(--ink3)}
+.success-id .value{font-size:13px;font-weight:600;color:var(--blue);font-family:monospace}
+
+/* LOADING */
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:600px){
+  .field-grid-2{grid-template-columns:1fr}
+  .cat-grid{grid-template-columns:1fr 1fr}
+  .estados-grid{grid-template-columns:repeat(3,1fr)}
+  .btn-row{flex-direction:column-reverse}
+  .btn{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <rect x="2" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+        <rect x="9" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+        <rect x="2" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+        <rect x="9" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">For<em>next</em></span>
+  </a>
+  <a href="index.html" class="nav-back">← Voltar</a>
+</nav>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <h1>Cadastro de Fornecedor</h1>
+    <p>Preencha as informações abaixo para aparecer no ranking e receber RFQs de compradores.</p>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress">
+    <div class="prog-step active" id="prog-1">
+      <div class="prog-num">1</div>
+      <div class="prog-label">Dados básicos</div>
+    </div>
+    <div class="prog-line" id="line-1"></div>
+    <div class="prog-step inactive" id="prog-2">
+      <div class="prog-num">2</div>
+      <div class="prog-label">Categoria</div>
+    </div>
+    <div class="prog-line" id="line-2"></div>
+    <div class="prog-step inactive" id="prog-3">
+      <div class="prog-num">3</div>
+      <div class="prog-label">Operação</div>
+    </div>
+  </div>
+
+  <!-- STEP 1: DADOS BÁSICOS -->
+  <div class="step active" id="step-1">
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🏭</span>Informações da empresa</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Nome da empresa <span>*</span></label>
+          <input type="text" id="nome" placeholder="Ex: Confecções Paulista Ltda">
+        </div>
+        <div class="field-grid field-grid-2">
+          <div class="field">
+            <label>E-mail <span>*</span></label>
+            <input type="email" id="email" placeholder="contato@empresa.com.br">
+          </div>
+          <div class="field">
+            <label>Telefone / WhatsApp <span>*</span></label>
+            <input type="tel" id="telefone" placeholder="(11) 99999-9999">
+          </div>
+        </div>
+        <div class="field-grid field-grid-2">
+          <div class="field">
+            <label>Cidade <span>*</span></label>
+            <input type="text" id="cidade" placeholder="São Paulo">
+          </div>
+          <div class="field">
+            <label>Estado <span>*</span></label>
+            <select id="estado">
+              <option value="">Selecione</option>
+              <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+              <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+              <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+              <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+              <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+              <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+              <option selected>SP</option><option>SE</option><option>TO</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Site (opcional)</label>
+          <input type="url" id="site" placeholder="https://www.empresa.com.br">
+        </div>
+        <div class="field">
+          <label>Descrição da empresa <span>*</span></label>
+          <textarea id="descricao" placeholder="Conte um pouco sobre sua empresa, diferenciais, especialidades..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="irStep2()">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: CATEGORIA -->
+  <div class="step" id="step-2">
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">📦</span>Qual é a sua categoria principal?</div>
+      <div class="cat-grid" id="cat-grid">
+        <label class="cat-option"><input type="radio" name="categoria" value="Uniformes Corporativos"><span>👕</span> Uniformes</label>
+        <label class="cat-option"><input type="radio" name="categoria" value="EPI"><span>🦺</span> EPI</label>
+        <label class="cat-option"><input type="radio" name="categoria" value="Tintas Industriais"><span>🎨</span> Tintas</label>
+        <label class="cat-option"><input type="radio" name="categoria" value="MRO"><span>🔧</span> MRO</label>
+        <label class="cat-option"><input type="radio" name="categoria" value="Embalagens"><span>📦</span> Embalagens</label>
+        <label class="cat-option"><input type="radio" name="categoria" value="Limpeza e Higiene"><span>🧹</span> Limpeza</label>
+        <label class="cat-option"><input type="radio" name="categoria" value="Material de Escritório"><span>📎</span> Escritório</label>
+        <label class="cat-option"><input type="radio" name="categoria" value="TI e Periféricos"><span>💻</span> TI</label>
+        <label class="cat-option"><input type="radio" name="categoria" value="Alimentação Corporativa"><span>🍽</span> Alimentação</label>
+        <label class="cat-option"><input type="radio" name="categoria" value="Facilities"><span>🏢</span> Facilities</label>
+        <label class="cat-option"><input type="radio" name="categoria" value="Logística"><span>🚚</span> Logística</label>
+        <label class="cat-option"><input type="radio" name="categoria" value="Materiais Elétricos"><span>⚡</span> Elétrica</label>
+      </div>
+      <div class="field-error" id="cat-error" style="display:none;margin-top:10px">Selecione uma categoria</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="irStep1()">← Voltar</button>
+      <button class="btn btn-primary" onclick="irStep3()">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: OPERAÇÃO -->
+  <div class="step" id="step-3">
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">⚙️</span>Sobre sua operação</div>
+      <div class="field-grid">
+        <div class="field-grid field-grid-2">
+          <div class="field">
+            <label>Capacidade de atendimento <span>*</span></label>
+            <select id="capacidade">
+              <option value="">Selecione</option>
+              <option>Até 500 unidades/mês</option>
+              <option>500 – 2.000 unidades/mês</option>
+              <option>2.000 – 10.000 unidades/mês</option>
+              <option>Acima de 10.000 unidades/mês</option>
+              <option>Sob consulta</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Prazo médio de entrega <span>*</span></label>
+            <select id="prazo">
+              <option value="">Selecione</option>
+              <option>Até 7 dias</option>
+              <option>8 – 15 dias</option>
+              <option>16 – 30 dias</option>
+              <option>Acima de 30 dias</option>
+              <option>Depende do pedido</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="irStep2()">← Voltar</button>
+      <button class="btn btn-primary" id="btn-submit" onclick="salvarFornecedor()">
+        <span id="btn-text">Finalizar cadastro</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="step" id="step-success">
+    <div class="card">
+      <div class="success-screen">
+        <div class="success-icon">✓</div>
+        <h2>Cadastro realizado!</h2>
+        <p>Seu perfil está ativo na plataforma. Você já pode receber RFQs de compradores e construir sua reputação no ranking.</p>
+        <div class="success-id">
+          <span class="label">ID do cadastro</span>
+          <span class="value" id="success-id-value">—</span>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <a href="fornecedores.html" class="btn btn-primary">Ver ranking de fornecedores</a>
+          <a href="index.html" class="btn btn-ghost">Voltar ao início</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SUPABASE_URL = 'https://xnpvysulxouzxqdqhwuq.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucHZ5c3VseG91enhxZHFod3VxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzOTU0MjgsImV4cCI6MjA5NTk3MTQyOH0.dmQRu68NfNq2nSN3YAszVR9u7yf4YgyevindTBWIYV8';
+
+// Category click
+document.querySelectorAll('.cat-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('.cat-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    document.getElementById('cat-error').style.display = 'none';
+  });
+});
+
+function val(id) { return document.getElementById(id)?.value?.trim() || ''; }
+
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+}
+
+function updateProgress(step) {
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById('prog-' + i);
+    const line = document.getElementById('line-' + i);
+    el.className = 'prog-step ' + (i < step ? 'done' : i === step ? 'active' : 'inactive');
+    if (line) line.className = 'prog-line ' + (i < step ? 'done' : '');
+  }
+}
+
+function irStep1() { showStep(1); updateProgress(1); window.scrollTo(0,0); }
+
+function irStep2() {
+  const nome = val('nome'), email = val('email'), telefone = val('telefone');
+  const cidade = val('cidade'), estado = val('estado'), descricao = val('descricao');
+  if (!nome || !email || !telefone || !cidade || !estado || !descricao) {
+    alert('Preencha todos os campos obrigatórios antes de continuar.');
+    return;
+  }
+  showStep(2); updateProgress(2); window.scrollTo(0,0);
+}
+
+function irStep3() {
+  const selected = document.querySelector('.cat-option.selected');
+  if (!selected) { document.getElementById('cat-error').style.display = 'block'; return; }
+  showStep(3); updateProgress(3); window.scrollTo(0,0);
+}
+
+async function salvarFornecedor() {
+  const capacidade = val('capacidade'), prazo = val('prazo');
+  if (!capacidade || !prazo) { alert('Preencha todos os campos obrigatórios.'); return; }
+
+  const btn = document.getElementById('btn-submit');
+  const btnText = document.getElementById('btn-text');
+  btn.disabled = true;
+  btnText.innerHTML = '<span class="spinner"></span> Salvando...';
+
+  const categoria = document.querySelector('.cat-option.selected input').value;
+
+  const dados = {
+    nome: val('nome'),
+    email: val('email'),
+    telefone: val('telefone'),
+    cidade: val('cidade'),
+    estado: val('estado'),
+    site: val('site') || null,
+    descricao: val('descricao'),
+    categoria,
+    capacidade,
+    prazo_entrega: prazo,
+  };
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/fornecedores`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(dados)
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      if (data?.code === '23505') {
+        alert('Este e-mail já está cadastrado na plataforma.');
+      } else {
+        alert('Erro ao salvar: ' + (data?.message || 'Tente novamente.'));
+      }
+      btn.disabled = false;
+      btnText.textContent = 'Finalizar cadastro';
+      return;
+    }
+
+    document.getElementById('success-id-value').textContent = data[0]?.id?.slice(0,8).toUpperCase() || '—';
+    showStep('success');
+    window.scrollTo(0,0);
+
+  } catch (err) {
+    alert('Erro de conexão. Verifique sua internet e tente novamente.');
+    btn.disabled = false;
+    btnText.textContent = 'Finalizar cadastro';
+  }
+}
+</script>
+</body>
+</html>

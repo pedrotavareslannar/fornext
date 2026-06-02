@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fornext — O Hub de Suprimentos das Empresas Brasileiras</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#2563eb;
+  --blue-dark:#1e40af;
+  --blue-light:#60a5fa;
+  --blue-bg:#eff6ff;
+  --blue-border:#bfdbfe;
+  --ink:#111110;
+  --ink2:#6b7280;
+  --ink3:#9ca3af;
+  --bg:#ffffff;
+  --bg2:#f9fafb;
+  --bg3:#f3f4f6;
+  --border:#e5e7eb;
+  --border2:#d1d5db;
+  --green:#16a34a;
+  --green-bg:#f0fdf4;
+  --green-border:#bbf7d0;
+  --amber:#d97706;
+  --amber-bg:#fffbeb;
+  --red:#dc2626;
+  --red-bg:#fef2f2;
+  --r:10px;
+  --font:'Inter',system-ui,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* ── UTILITIES ── */
+.container{max-width:1080px;margin:0 auto;padding:0 40px}
+.eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:12px}
+.eyebrow::before{content:'';width:14px;height:1.5px;background:var(--blue);border-radius:2px}
+.section{padding:80px 0}
+.section-alt{padding:80px 0;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;height:58px;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-inner{height:100%;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-logo-icon{width:30px;height:30px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-logo-icon svg{display:block}
+.nav-logo-text{font-size:15px;font-weight:700;letter-spacing:-0.03em;color:var(--ink)}
+.nav-logo-text em{font-style:normal;color:var(--blue)}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{font-size:13px;font-weight:500;color:var(--ink2);text-decoration:none;transition:color .15s}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{background:var(--blue);color:#fff;padding:8px 18px;border-radius:7px;font-size:13px;font-weight:600;text-decoration:none;transition:opacity .15s;white-space:nowrap}
+.nav-cta:hover{opacity:.88}
+
+/* ── HERO ── */
+.hero{padding:80px 0 72px}
+.hero-inner{display:grid;grid-template-columns:1fr 430px;gap:64px;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:100px;padding:5px 13px;font-size:11px;font-weight:600;color:var(--blue);margin-bottom:24px}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:clamp(2rem,4vw,3.2rem);font-weight:700;letter-spacing:-0.04em;line-height:1.1;color:var(--ink);margin-bottom:18px}
+.hero h1 em{font-style:normal;color:var(--blue)}
+.hero-sub{font-size:15px;color:var(--ink2);line-height:1.7;max-width:480px;margin-bottom:32px}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;transition:all .15s;font-family:var(--font);cursor:pointer;border:none}
+.btn-blue{background:var(--blue);color:#fff;box-shadow:0 1px 3px rgba(37,99,235,.3)}
+.btn-blue:hover{background:var(--blue-dark)}
+.btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--border2)}
+.btn-ghost:hover{border-color:var(--ink)}
+.hero-stats{display:flex;gap:28px;margin-top:40px;padding-top:32px;border-top:1px solid var(--border)}
+.stat .num{font-size:22px;font-weight:700;letter-spacing:-0.03em;color:var(--ink)}
+.stat .lbl{font-size:11px;color:var(--ink2);margin-top:2px}
+
+/* ── MOCK UI ── */
+.mock-ui{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--bg2);box-shadow:0 4px 20px rgba(0,0,0,0.07)}
+.mock-topbar{height:38px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:8px}
+.mock-dots{display:flex;gap:5px}
+.mock-dot{width:9px;height:9px;border-radius:50%;background:var(--border2)}
+.mock-urlbar{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:5px;height:22px;padding:0 10px;font-size:10px;color:var(--ink3);display:flex;align-items:center;font-family:monospace}
+.mock-body{padding:14px;display:flex;flex-direction:column;gap:10px}
+.mock-section-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:5px}
+.rfq-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.rfq-cell{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 10px}
+.rfq-cell .lbl{font-size:9px;color:var(--ink3);margin-bottom:2px}
+.rfq-cell .val{font-size:12px;font-weight:600;color:var(--ink)}
+.proposals{display:flex;flex-direction:column;gap:5px}
+.proposal{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 10px;transition:border-color .15s}
+.proposal:first-child{border-color:var(--blue-border);background:var(--blue-bg)}
+.p-rank{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.p-rank.g{background:#fef9c3;color:#92400e}
+.p-rank.s{background:var(--bg3);color:var(--ink2)}
+.p-rank.b{background:var(--bg3);color:var(--ink3)}
+.p-name{flex:1;font-size:11px;font-weight:500;color:var(--ink)}
+.p-score{font-size:10px;color:var(--green);font-weight:600}
+.p-price{font-size:12px;font-weight:700;color:var(--ink)}
+.p-best{font-size:9px;font-weight:600;padding:2px 6px;background:var(--green-bg);color:var(--green);border-radius:100px;border:1px solid var(--green-border)}
+.economy{background:var(--green-bg);border:1px solid var(--green-border);border-radius:7px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center}
+.economy .lbl{font-size:11px;color:var(--ink2)}
+.economy .val{font-size:13px;font-weight:700;color:var(--green)}
+
+/* ── PROOF ── */
+.proof{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:16px 0}
+.proof-inner{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.proof-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);white-space:nowrap}
+.proof-sep{width:1px;height:16px;background:var(--border2)}
+.proof-sectors{display:flex;gap:16px;flex-wrap:wrap}
+.proof-sector{font-size:12px;color:var(--ink2);display:flex;align-items:center;gap:4px}
+
+/* ── PROBLEM ── */
+.problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:36px}
+.pcard{border:1px solid var(--border);border-radius:var(--r);padding:26px;background:var(--bg)}
+.pcard.alt{background:var(--blue-bg);border-color:var(--blue-border)}
+.pcard h3{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.pcard .sub{font-size:12px;color:var(--ink2);margin-bottom:16px}
+.plist{display:flex;flex-direction:column;gap:9px}
+.pitem{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:var(--ink2);line-height:1.5}
+.icon-x{width:16px;height:16px;border-radius:4px;background:var(--red-bg);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0;margin-top:2px}
+.icon-check{width:16px;height:16px;border-radius:4px;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0;margin-top:2px}
+
+/* ── HOW ── */
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:36px}
+.how-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:22px 18px;transition:border-color .15s,box-shadow .15s}
+.how-card:hover{border-color:var(--blue-border);box-shadow:0 4px 14px rgba(37,99,235,.07)}
+.how-step{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--blue);margin-bottom:12px}
+.how-icon{font-size:22px;margin-bottom:10px}
+.how-card h3{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.how-card p{font-size:12px;color:var(--ink2);line-height:1.6}
+
+/* ── CATEGORIES ── */
+.cats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:32px}
+.cat-group{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:18px}
+.cat-group-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.cat-items{display:flex;flex-direction:column;gap:5px}
+.cat-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);padding:4px 6px;border-radius:6px;transition:background .1s;cursor:default}
+.cat-item:hover{background:var(--bg2);color:var(--ink)}
+.phase-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.d-launch{background:var(--blue)}
+.d-soon{background:var(--amber)}
+.d-future{background:var(--border2)}
+.legend{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink2)}
+
+/* ── VALUE ── */
+.value-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:36px}
+.vcard{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:26px}
+.vcard-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;margin-bottom:18px;border-bottom:1px solid var(--border)}
+.vcard-head h3{font-size:14px;font-weight:600;color:var(--ink)}
+.vtag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:4px}
+.vtag-b{background:var(--blue-bg);color:var(--blue)}
+.vtag-g{background:var(--green-bg);color:var(--green)}
+.vitems{display:flex;flex-direction:column;gap:9px}
+.vitem{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--ink2);line-height:1.5}
+.vdot{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.vdot-b{background:var(--blue)}
+.vdot-g{background:var(--green)}
+
+/* ── VISION ── */
+.vision-section{background:var(--ink);padding:80px 0}
+.vision-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#60a5fa;margin-bottom:12px}
+.vision-eyebrow::before{content:'';width:14px;height:1.5px;background:#60a5fa;border-radius:2px}
+.vision-section h2{font-size:clamp(1.5rem,2.8vw,2.2rem);font-weight:700;letter-spacing:-0.03em;line-height:1.15;color:#fff;margin-bottom:12px}
+.vision-section h2 span{color:#60a5fa}
+.vision-sub{font-size:14px;color:#9ca3af;line-height:1.7;max-width:520px;margin-bottom:44px}
+.vision-comps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px}
+.vcomp{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:var(--r);padding:20px;transition:border-color .15s}
+.vcomp:hover{border-color:rgba(255,255,255,.2)}
+.vcomp-from{font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.vcomp-name{font-size:14px;font-weight:700;color:#fff;margin-bottom:5px}
+.vcomp-desc{font-size:12px;color:#9ca3af;line-height:1.55}
+.vision-cta-bar{background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.25);border-radius:var(--r);padding:22px 26px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.vision-cta-bar h3{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.vision-cta-bar p{font-size:12px;color:#9ca3af}
+
+/* ── CTA ── */
+.cta-section{padding:80px 0;background:var(--bg2);border-top:1px solid var(--border)}
+.cta-inner{max-width:480px;margin:0 auto;text-align:center}
+.cta-inner h2{font-size:clamp(1.5rem,2.5vw,2rem);font-weight:700;letter-spacing:-0.03em;margin-bottom:10px}
+.cta-inner p{font-size:14px;color:var(--ink2);line-height:1.7;margin-bottom:32px}
+.cta-form{display:flex;gap:8px;margin-bottom:14px}
+.cta-input{flex:1;padding:10px 14px;border-radius:8px;border:1.5px solid var(--border2);background:var(--bg);color:var(--ink);font-size:13px;font-family:var(--font);outline:none;transition:border-color .15s}
+.cta-input::placeholder{color:var(--ink3)}
+.cta-input:focus{border-color:var(--blue)}
+.cta-roles{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.cta-role{display:flex;align-items:center;gap:6px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--ink2);cursor:pointer;transition:all .15s;font-family:var(--font);font-weight:500}
+.cta-role:hover,.cta-role.active{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+.success{display:none;color:var(--green);font-size:13px;font-weight:500;margin-top:14px}
+
+/* ── FOOTER ── */
+footer{padding:28px 0;border-top:1px solid var(--border)}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.footer-logo{display:flex;align-items:center;gap:7px}
+.footer-logo-icon{width:22px;height:22px;background:var(--blue);border-radius:5px;display:flex;align-items:center;justify-content:center}
+.footer-logo-text{font-size:13px;font-weight:700;letter-spacing:-0.02em;color:var(--ink)}
+.footer-logo-text em{font-style:normal;color:var(--blue)}
+.footer-tagline{font-size:11px;color:var(--ink3);margin-top:3px}
+.footer-right{font-size:11px;color:var(--ink3);text-align:right;line-height:1.7}
+
+/* ── ANIMATE ── */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:860px){
+  .container{padding:0 20px}
+  .hero-inner{grid-template-columns:1fr}
+  .mock-ui{display:none}
+  .section,.section-alt{padding:56px 0}
+  .problem-grid,.value-grid,.vision-comps{grid-template-columns:1fr}
+  .how-grid{grid-template-columns:1fr 1fr}
+  .cats-grid{grid-template-columns:1fr 1fr}
+  .vision-cta-bar{flex-direction:column;align-items:flex-start}
+  nav .nav-links{display:none}
+  footer .footer-inner{flex-direction:column;align-items:flex-start}
+  footer .footer-right{text-align:left}
+  .cta-form{flex-direction:column}
+  .cta-section,.vision-section{padding:56px 0}
+  .hero{padding:56px 0}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="2" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+          <rect x="9" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+          <rect x="2" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+          <rect x="9" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">For<em>next</em></span>
+    </a>
+    <div style="display:flex;align-items:center;gap:28px">
+      <div class="nav-links">
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#categorias">Categorias</a>
+        <a href="#para-quem">Para quem</a>
+      </div>
+      <a href="#waitlist" class="nav-cta">Entrar na lista →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-badge"><div class="badge-dot"></div>Lista de espera aberta</div>
+        <h1>O Hub de suprimentos <em>corporativos</em> do Brasil.</h1>
+        <p class="hero-sub">Compradores encontram fornecedores confiáveis. Fornecedores encontram oportunidades qualificadas. Cotação, comparação e gestão — em uma única plataforma.</p>
+        <div class="hero-btns">
+          <a href="#waitlist" class="btn btn-blue">Entrar na lista de espera</a>
+          <a href="#como-funciona" class="btn btn-ghost">Como funciona</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><div class="num">14</div><div class="lbl">categorias</div></div>
+          <div class="stat"><div class="num">3×</div><div class="lbl">mais rápido para cotar</div></div>
+          <div class="stat"><div class="num">100%</div><div class="lbl">fornecedores avaliados</div></div>
+        </div>
+      </div>
+      <div class="mock-ui">
+        <div class="mock-topbar">
+          <div class="mock-dots"><div class="mock-dot"></div><div class="mock-dot"></div><div class="mock-dot"></div></div>
+          <div class="mock-urlbar">fornext.com.br/rfq/42817</div>
+        </div>
+        <div class="mock-body">
+          <div>
+            <div class="mock-section-label">RFQ #42817 · Uniformes Corporativos</div>
+            <div class="rfq-meta">
+              <div class="rfq-cell"><div class="lbl">Categoria</div><div class="val">👕 Uniformes</div></div>
+              <div class="rfq-cell"><div class="lbl">Quantidade</div><div class="val">850 peças</div></div>
+              <div class="rfq-cell"><div class="lbl">Prazo</div><div class="val">25 dias</div></div>
+            </div>
+          </div>
+          <div>
+            <div class="mock-section-label">3 propostas recebidas</div>
+            <div class="proposals">
+              <div class="proposal">
+                <div class="p-rank g">1</div>
+                <div class="p-name">Confecções Paulista</div>
+                <div class="p-score">★ 9.8</div>
+                <div class="p-price">R$ 28.700</div>
+                <div class="p-best">Melhor</div>
+              </div>
+              <div class="proposal">
+                <div class="p-rank s">2</div>
+                <div class="p-name">Uniflex Industrial</div>
+                <div class="p-score">★ 9.6</div>
+                <div class="p-price">R$ 29.100</div>
+                <div></div>
+              </div>
+              <div class="proposal">
+                <div class="p-rank b">3</div>
+                <div class="p-name">ModaWork Têxtil</div>
+                <div class="p-score">★ 9.4</div>
+                <div class="p-price">R$ 31.200</div>
+                <div></div>
+              </div>
+            </div>
+          </div>
+          <div class="economy">
+            <span class="lbl">💡 Economia potencial</span>
+            <span class="val">− R$ 2.500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROOF STRIP -->
+<div class="proof">
+  <div class="container proof-inner">
+    <div class="proof-lbl">Para compradores de</div>
+    <div class="proof-sep"></div>
+    <div class="proof-sectors">
+      <div class="proof-sector">🏗 Construção</div>
+      <div class="proof-sector">🏭 Indústria</div>
+      <div class="proof-sector">🚚 Logística</div>
+      <div class="proof-sector">🏥 Saúde</div>
+      <div class="proof-sector">🏢 Facilities</div>
+      <div class="proof-sector">🛒 Varejo</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<div class="section">
+  <div class="container reveal">
+    <div class="eyebrow">O problema</div>
+    <h2 style="font-size:clamp(1.4rem,2.5vw,2rem);font-weight:700;letter-spacing:-0.03em;line-height:1.15;margin-bottom:6px">O processo de compras B2B ainda é manual e fragmentado.</h2>
+    <p style="font-size:14px;color:var(--ink2);max-width:520px">Sem uma plataforma dedicada, compradores perdem tempo e tomam decisões sem dados.</p>
+    <div class="problem-grid">
+      <div class="pcard">
+        <h3>Como é hoje</h3>
+        <p class="sub">O que acontece sem uma plataforma dedicada.</p>
+        <div class="plist">
+          <div class="pitem"><div class="icon-x">✕</div>Buscam fornecedores no Google e grupos de WhatsApp</div>
+          <div class="pitem"><div class="icon-x">✕</div>Recebem orçamentos em PDF, e-mail e planilha — cada um num formato diferente</div>
+          <div class="pitem"><div class="icon-x">✕</div>Não têm avaliações confiáveis nem histórico de entregas</div>
+          <div class="pitem"><div class="icon-x">✕</div>Recomeçam o processo do zero a cada nova compra</div>
+          <div class="pitem"><div class="icon-x">✕</div>Tomam decisões sem dados — o risco fica com a empresa</div>
+        </div>
+      </div>
+      <div class="pcard alt">
+        <h3>Com a Fornext</h3>
+        <p class="sub">Um Hub centralizado que resolve cada uma dessas dores.</p>
+        <div class="plist">
+          <div class="pitem"><div class="icon-check">✓</div>Fornecedores qualificados por categoria, ranqueados por reputação real</div>
+          <div class="pitem"><div class="icon-check">✓</div>RFQ padronizada: um formulário, propostas comparáveis</div>
+          <div class="pitem"><div class="icon-check">✓</div>Painel único para comparar preço, prazo e avaliações</div>
+          <div class="pitem"><div class="icon-check">✓</div>CRM de fornecedores com histórico e avaliações</div>
+          <div class="pitem"><div class="icon-check">✓</div>Decisões baseadas em dados, não em intuição</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW -->
+<div class="section-alt" id="como-funciona">
+  <div class="container reveal">
+    <div class="eyebrow">Como funciona</div>
+    <h2 style="font-size:clamp(1.4rem,2.5vw,2rem);font-weight:700;letter-spacing:-0.03em;line-height:1.15">Quatro etapas. Uma decisão mais rápida.</h2>
+    <div class="how-grid">
+      <div class="how-card"><div class="how-step">01</div><div class="how-icon">🔎</div><h3>Descubra</h3><p>Encontre fornecedores em 14 categorias. Filtre por região, capacidade, prazo e certificações.</p></div>
+      <div class="how-card"><div class="how-step">02</div><div class="how-icon">📋</div><h3>Solicite</h3><p>Envie uma RFQ padronizada para múltiplos fornecedores com um único formulário.</p></div>
+      <div class="how-card"><div class="how-step">03</div><div class="how-icon">📊</div><h3>Compare</h3><p>Receba propostas no mesmo formato e compare preço, prazo e reputação lado a lado.</p></div>
+      <div class="how-card"><div class="how-step">04</div><div class="how-icon">📇</div><h3>Gerencie</h3><p>Salve fornecedores, organize por categoria e construa uma base estratégica de parceiros.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="section" id="categorias">
+  <div class="container reveal">
+    <div class="eyebrow">Categorias</div>
+    <h2 style="font-size:clamp(1.4rem,2.5vw,2rem);font-weight:700;letter-spacing:-0.03em;line-height:1.15;margin-bottom:6px">14 categorias. Um único comprador.</h2>
+    <p style="font-size:14px;color:var(--ink2);max-width:500px">O mesmo setor de suprimentos que compra uniforme também compra EPI, tinta e MRO — tudo aqui.</p>
+    <div class="legend">
+      <div class="legend-item"><div class="phase-dot d-launch"></div>Lançamento</div>
+      <div class="legend-item"><div class="phase-dot d-soon"></div>Em breve</div>
+      <div class="legend-item"><div class="phase-dot d-future"></div>Roadmap</div>
+    </div>
+    <div class="cats-grid">
+      <div class="cat-group">
+        <div class="cat-group-title">Pessoas & Proteção</div>
+        <div class="cat-items">
+          <div class="cat-item"><div class="phase-dot d-launch"></div>👕 Uniformes Corporativos</div>
+          <div class="cat-item"><div class="phase-dot d-launch"></div>🦺 EPI</div>
+          <div class="cat-item"><div class="phase-dot d-soon"></div>🍽 Alimentação Corporativa</div>
+        </div>
+      </div>
+      <div class="cat-group">
+        <div class="cat-group-title">Operações & Manutenção</div>
+        <div class="cat-items">
+          <div class="cat-item"><div class="phase-dot d-launch"></div>🎨 Tintas Industriais</div>
+          <div class="cat-item"><div class="phase-dot d-soon"></div>🔧 MRO</div>
+          <div class="cat-item"><div class="phase-dot d-future"></div>⚡ Materiais Elétricos</div>
+          <div class="cat-item"><div class="phase-dot d-future"></div>🚿 Hidráulica</div>
+          <div class="cat-item"><div class="phase-dot d-future"></div>🔩 Metais e Ferragens</div>
+        </div>
+      </div>
+      <div class="cat-group">
+        <div class="cat-group-title">Escritório & TI</div>
+        <div class="cat-items">
+          <div class="cat-item"><div class="phase-dot d-soon"></div>📎 Material de Escritório</div>
+          <div class="cat-item"><div class="phase-dot d-soon"></div>🧹 Limpeza e Higiene</div>
+          <div class="cat-item"><div class="phase-dot d-soon"></div>📦 Embalagens</div>
+          <div class="cat-item"><div class="phase-dot d-future"></div>💻 TI e Periféricos</div>
+        </div>
+      </div>
+      <div class="cat-group">
+        <div class="cat-group-title">Serviços</div>
+        <div class="cat-items">
+          <div class="cat-item"><div class="phase-dot d-future"></div>🏢 Facilities</div>
+          <div class="cat-item"><div class="phase-dot d-future"></div>🚚 Logística</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VALUE -->
+<div class="section-alt" id="para-quem">
+  <div class="container reveal">
+    <div class="eyebrow">Para quem é</div>
+    <h2 style="font-size:clamp(1.4rem,2.5vw,2rem);font-weight:700;letter-spacing:-0.03em;line-height:1.15">Dois lados. Uma plataforma.</h2>
+    <div class="value-grid">
+      <div class="vcard">
+        <div class="vcard-head"><h3>🏢 Para Compradores</h3><span class="vtag vtag-b">Comprador</span></div>
+        <div class="vitems">
+          <div class="vitem"><div class="vdot vdot-b"></div>Encontre fornecedores confiáveis em qualquer categoria</div>
+          <div class="vitem"><div class="vdot vdot-b"></div>Solicite cotações em minutos, não em dias</div>
+          <div class="vitem"><div class="vdot vdot-b"></div>Compare propostas padronizadas num único painel</div>
+          <div class="vitem"><div class="vdot vdot-b"></div>Construa uma base estratégica de fornecedores</div>
+          <div class="vitem"><div class="vdot vdot-b"></div>Tome decisões baseadas em dados e avaliações reais</div>
+          <div class="vitem"><div class="vdot vdot-b"></div>Reduza o tempo de pesquisa em até 3×</div>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="vcard-head"><h3>🏭 Para Fornecedores</h3><span class="vtag vtag-g">Fornecedor</span></div>
+        <div class="vitems">
+          <div class="vitem"><div class="vdot vdot-g"></div>Receba RFQs qualificadas sem custo de prospecção</div>
+          <div class="vitem"><div class="vdot vdot-g"></div>Ganhe visibilidade nacional com um perfil completo</div>
+          <div class="vitem"><div class="vdot vdot-g"></div>Construa reputação com avaliações verificadas</div>
+          <div class="vitem"><div class="vdot vdot-g"></div>Reduza custo de aquisição de novos clientes</div>
+          <div class="vitem"><div class="vdot vdot-g"></div>Transforme reputação em crescimento comercial</div>
+          <div class="vitem"><div class="vdot vdot-g"></div>Construa relacionamentos de longo prazo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VISION -->
+<div class="vision-section">
+  <div class="container reveal">
+    <div class="vision-eyebrow">Visão</div>
+    <h2>Estamos construindo a <span>infraestrutura digital</span><br>dos suprimentos brasileiros.</h2>
+    <p class="vision-sub">Assim como outras plataformas organizaram setores inteiros da economia, a Fornext quer organizar a relação entre compradores e fornecedores no Brasil.</p>
+    <div class="vision-comps">
+      <div class="vcomp"><div class="vcomp-from">Transporte</div><div class="vcomp-name">Uber</div><div class="vcomp-desc">Conectou passageiros e motoristas com transparência, avaliações e confiança.</div></div>
+      <div class="vcomp"><div class="vcomp-from">Hospedagem</div><div class="vcomp-name">Airbnb</div><div class="vcomp-desc">Organizou um mercado fragmentado com padronização e reputação verificada.</div></div>
+      <div class="vcomp"><div class="vcomp-from">Networking</div><div class="vcomp-name">LinkedIn</div><div class="vcomp-desc">Criou conexões profissionais qualificadas baseadas em perfil e histórico.</div></div>
+    </div>
+    <div class="vision-cta-bar">
+      <div><h3>A Fornext faz o mesmo para Suprimentos Corporativos</h3><p>Marketplace hoje. Plataforma de compras amanhã. Sistema operacional dos suprimentos no futuro.</p></div>
+      <a href="#waitlist" class="btn btn-blue">Quero participar →</a>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section" id="waitlist">
+  <div class="container">
+    <div class="cta-inner reveal">
+      <div class="eyebrow" style="justify-content:center">Acesso antecipado</div>
+      <h2>Seja um dos primeiros usuários</h2>
+      <p>Estamos selecionando compradores e fornecedores para a primeira versão. Entre agora e tenha acesso gratuito no lançamento.</p>
+      <div class="cta-form">
+        <input class="cta-input" type="email" placeholder="Seu e-mail corporativo" id="emailInput">
+        <button class="btn btn-blue" onclick="submitWaitlist()">Entrar na lista →</button>
+      </div>
+      <div class="cta-roles">
+        <button class="cta-role" onclick="selectRole(this)">🏢 Sou Comprador</button>
+        <button class="cta-role" onclick="selectRole(this)">🏭 Sou Fornecedor</button>
+      </div>
+      <div class="success" id="success-msg">✓ Você está na lista. Entraremos em contato em breve.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container footer-inner">
+    <div>
+      <div class="footer-logo">
+        <div class="footer-logo-icon">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+            <rect x="2" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+            <rect x="9" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+            <rect x="2" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+            <rect x="9" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+          </svg>
+        </div>
+        <span class="footer-logo-text">For<em>next</em></span>
+      </div>
+      <div class="footer-tagline">O Hub de Suprimentos das Empresas Brasileiras</div>
+    </div>
+    <div class="footer-right">
+      <div>© 2026 Fornext</div>
+      <div>* Estimativas de mercado para validação de conceito</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function submitWaitlist(){
+  const v=document.getElementById('emailInput').value;
+  if(v&&v.includes('@')){
+    document.getElementById('success-msg').style.display='block';
+    document.getElementById('emailInput').value='';
+  }
+}
+function selectRole(el){
+  document.querySelectorAll('.cta-role').forEach(r=>r.classList.remove('active'));
+  el.classList.add('active');
+}
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')});
+},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fornext — Painel do Fornecedor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#2563eb;--blue-dark:#1e40af;--blue-bg:#eff6ff;--blue-border:#bfdbfe;
+  --ink:#111110;--ink2:#6b7280;--ink3:#9ca3af;
+  --bg:#ffffff;--bg2:#f9fafb;--bg3:#f3f4f6;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-border:#bbf7d0;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-border:#fde68a;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --r:8px;--font:'Inter',system-ui,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg2);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+
+nav{background:var(--bg);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 24px;position:sticky;top:0;z-index:50}
+.nav-inner{display:flex;align-items:center;gap:12px;width:100%}
+.nav-logo{display:flex;align-items:center;gap:7px;text-decoration:none}
+.nav-logo-icon{width:28px;height:28px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.nav-logo-text{font-size:14px;font-weight:700;letter-spacing:-0.03em;color:var(--ink)}
+.nav-logo-text em{font-style:normal;color:var(--blue)}
+.nav-tag{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px}
+.nav-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .15s;text-decoration:none}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:var(--blue-dark)}
+.btn-blue:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--ink2);border:1.5px solid var(--border2)}
+.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{opacity:.88}
+.btn-sm{padding:6px 12px;font-size:11px}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 56px)}
+
+/* SIDEBAR */
+.sidebar{background:var(--bg);border-right:1px solid var(--border);padding:20px 16px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.sidebar-section{margin-bottom:24px}
+.sidebar-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:10px;padding:0 4px}
+
+/* FORNECEDOR SELECTOR */
+.forn-selector{display:flex;flex-direction:column;gap:4px}
+.forn-sel-item{padding:9px 12px;border-radius:var(--r);cursor:pointer;transition:all .15s;border:1.5px solid transparent;display:flex;align-items:center;gap:8px}
+.forn-sel-item:hover{background:var(--bg2)}
+.forn-sel-item.active{background:var(--blue-bg);border-color:var(--blue-border)}
+.forn-sel-emoji{font-size:16px;flex-shrink:0}
+.forn-sel-info{flex:1;min-width:0}
+.forn-sel-name{font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.forn-sel-cat{font-size:10px;color:var(--ink3)}
+.forn-sel-badge{font-size:9px;font-weight:700;background:var(--amber-bg);color:var(--amber);padding:2px 6px;border-radius:100px;flex-shrink:0}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px}
+.stat-num{font-size:18px;font-weight:700;letter-spacing:-0.02em;color:var(--ink)}
+.stat-lbl{font-size:10px;color:var(--ink2);margin-top:2px}
+
+/* MAIN */
+.main{padding:28px;display:flex;flex-direction:column;gap:16px}
+.main-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;text-align:center;gap:12px}
+.main-empty-icon{font-size:36px}
+.main-empty h2{font-size:16px;font-weight:600;color:var(--ink)}
+.main-empty p{font-size:13px;color:var(--ink2);max-width:300px;line-height:1.6}
+
+/* PERFIL CARD */
+.perfil-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;align-items:center;gap:16px}
+.perfil-avatar{width:48px;height:48px;border-radius:12px;background:var(--blue-bg);border:1px solid var(--blue-border);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.perfil-info{flex:1}
+.perfil-name{font-size:15px;font-weight:700;letter-spacing:-0.02em;color:var(--ink);margin-bottom:4px}
+.perfil-meta{font-size:11px;color:var(--ink3);display:flex;gap:10px;flex-wrap:wrap}
+.perfil-score{font-size:13px;font-weight:700;color:var(--green)}
+
+/* TABS */
+.tabs{display:flex;gap:4px;background:var(--bg3);border-radius:var(--r);padding:4px;width:fit-content}
+.tab{padding:7px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--ink2);transition:all .15s;font-family:var(--font)}
+.tab.active{background:var(--bg);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* RFQ CARDS */
+.rfq-cards{display:flex;flex-direction:column;gap:12px}
+.rfq-card{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:20px;transition:border-color .15s}
+.rfq-card.nova{border-color:var(--blue-border);background:var(--blue-bg)}
+.rfq-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.rfq-card-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.rfq-card-id{font-size:10px;color:var(--ink3);font-family:monospace}
+.rfq-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.rfq-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;background:var(--bg3);color:var(--ink2)}
+.rfq-desc{font-size:12px;color:var(--ink2);line-height:1.55;margin-bottom:14px}
+.rfq-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.status-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;text-transform:uppercase;letter-spacing:.05em}
+.pill-aguardando{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.pill-respondida{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.pill-aceita{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--bg);border-radius:14px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:15px;font-weight:700;letter-spacing:-0.02em;margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--ink2);margin-bottom:20px}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.field label{font-size:11px;font-weight:600;color:var(--ink);letter-spacing:.02em}
+.field label span{color:var(--red);margin-left:2px}
+.field input,.field select,.field textarea{padding:9px 12px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg);color:var(--ink);font-size:13px;font-family:var(--font);outline:none;transition:border-color .15s;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue)}
+.field input::placeholder,.field textarea::placeholder{color:var(--ink3)}
+.field textarea{resize:vertical;min-height:80px;line-height:1.5}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--border) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:6px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .main{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <rect x="2" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+          <rect x="9" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+          <rect x="2" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+          <rect x="9" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">For<em>next</em></span>
+    </a>
+    <span class="nav-tag">Painel Fornecedor</span>
+    <div class="nav-actions">
+      <a href="fornecedores.html" class="btn btn-ghost">Ver ranking</a>
+      <button class="btn btn-ghost" onclick="logout()" style="color:var(--red);border-color:var(--red)">Sair</button>
+    </div>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">Minha empresa</div>
+      <div class="forn-selector" id="forn-selector">
+        <div class="skeleton" style="height:52px;border-radius:var(--r)"></div>
+      </div>
+    </div>
+    <div class="sidebar-section" id="sidebar-stats" style="display:none">
+      <div class="sidebar-title">Resumo</div>
+      <div class="stats-grid" id="stats-grid"></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main" id="main-content">
+    <div class="main-empty">
+      <div class="main-empty-icon">🏭</div>
+      <h2>Selecione sua empresa</h2>
+      <p>Escolha sua empresa na lista ao lado para ver as RFQs recebidas.</p>
+      <a href="cadastro-fornecedor.html" class="btn btn-blue" style="margin-top:8px">+ Cadastrar empresa</a>
+    </div>
+  </main>
+
+</div>
+
+<!-- MODAL PROPOSTA -->
+<div class="modal-overlay" id="modal" style="display:none" onclick="fecharModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">Enviar proposta</div>
+    <div class="modal-sub" id="modal-sub">Respondendo à RFQ</div>
+    <div class="field">
+      <label>Valor total (R$) <span>*</span></label>
+      <input type="number" id="prop-valor" placeholder="Ex: 15000.00" step="0.01" min="0">
+    </div>
+    <div class="field">
+      <label>Prazo de entrega <span>*</span></label>
+      <select id="prop-prazo">
+        <option value="">Selecione</option>
+        <option>Até 7 dias</option>
+        <option>8 a 15 dias</option>
+        <option>16 a 30 dias</option>
+        <option>30 a 60 dias</option>
+        <option>A combinar</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Observações / detalhes da proposta</label>
+      <textarea id="prop-desc" placeholder="Descreva sua proposta, condições, especificações, validade..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal').style.display='none'">Cancelar</button>
+      <button class="btn btn-green" id="btn-enviar-prop" onclick="enviarProposta()">
+        <span id="btn-prop-text">Enviar proposta</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://xnpvysulxouzxqdqhwuq.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucHZ5c3VseG91enhxZHFod3VxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzOTU0MjgsImV4cCI6MjA5NTk3MTQyOH0.dmQRu68NfNq2nSN3YAszVR9u7yf4YgyevindTBWIYV8';
+
+const catEmojis={
+  'Uniformes Corporativos':'👕','EPI':'🦺','Tintas Industriais':'🎨',
+  'MRO':'🔧','Embalagens':'📦','Limpeza e Higiene':'🧹',
+  'Material de Escritório':'📎','TI e Periféricos':'💻',
+  'Alimentação Corporativa':'🍽','Facilities':'🏢',
+  'Logística':'🚚','Materiais Elétricos':'⚡'
+};
+
+let fornecedorAtivo = null;
+let propostaAtiva = null;
+
+function formatDate(dt){ return new Date(dt).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}); }
+function val(id){ return document.getElementById(id)?.value?.trim()||''; }
+
+async function carregarFornecedores(){
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/fornecedores?select=*&ativo=eq.true&order=nome.asc`,{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+    });
+    const lista = await res.json();
+    const sel = document.getElementById('forn-selector');
+
+    if(!lista.length){
+      sel.innerHTML=`<div style="font-size:12px;color:var(--ink3);padding:8px 4px">Nenhuma empresa cadastrada.<br><a href="cadastro-fornecedor.html" style="color:var(--blue);font-weight:600">Cadastrar agora →</a></div>`;
+      return;
+    }
+
+    // Conta RFQs pendentes por fornecedor
+    const pendentes = {};
+    for(const f of lista){
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/propostas?fornecedor_id=eq.${f.id}&status=eq.aguardando&select=id`,{
+        headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+      });
+      const p = await r.json();
+      pendentes[f.id] = p.length;
+    }
+
+    sel.innerHTML = lista.map(f=>`
+      <div class="forn-sel-item" id="fsel-${f.id}" onclick="selecionarFornecedor('${f.id}')">
+        <div class="forn-sel-emoji">${catEmojis[f.categoria]||'🏭'}</div>
+        <div class="forn-sel-info">
+          <div class="forn-sel-name">${f.nome}</div>
+          <div class="forn-sel-cat">${f.categoria}</div>
+        </div>
+        ${pendentes[f.id]>0?`<div class="forn-sel-badge">${pendentes[f.id]}</div>`:''}
+      </div>`).join('');
+
+    // Auto-seleciona primeiro
+    selecionarFornecedor(lista[0].id);
+  } catch(e){
+    document.getElementById('forn-selector').innerHTML=`<div style="font-size:12px;color:var(--red);padding:8px 4px">Erro ao carregar.</div>`;
+  }
+}
+
+async function selecionarFornecedor(id){
+  document.querySelectorAll('.forn-sel-item').forEach(el=>el.classList.remove('active'));
+  const el = document.getElementById('fsel-'+id);
+  if(el) el.classList.add('active');
+
+  const main = document.getElementById('main-content');
+  main.innerHTML=`<div class="skeleton" style="height:72px;border-radius:12px"></div><div class="skeleton" style="height:40px;border-radius:var(--r);margin-top:12px"></div>`;
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/fornecedores?id=eq.${id}&select=*`,{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+    });
+    const data = await res.json();
+    fornecedorAtivo = data[0];
+
+    // Stats
+    const resP = await fetch(`${SUPABASE_URL}/rest/v1/propostas?fornecedor_id=eq.${id}&select=*`,{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+    });
+    const todasPropostas = await resP.json();
+    const pendentes = todasPropostas.filter(p=>p.status==='aguardando').length;
+    const respondidas = todasPropostas.filter(p=>p.status!=='aguardando').length;
+    const aceitas = todasPropostas.filter(p=>p.status==='aceita').length;
+
+    document.getElementById('sidebar-stats').style.display='block';
+    document.getElementById('stats-grid').innerHTML=`
+      <div class="stat-box"><div class="stat-num" style="color:var(--amber)">${pendentes}</div><div class="stat-lbl">Pendentes</div></div>
+      <div class="stat-box"><div class="stat-num">${respondidas}</div><div class="stat-lbl">Respondidas</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--green)">${aceitas}</div><div class="stat-lbl">Aceitas</div></div>
+      <div class="stat-box"><div class="stat-num">${fornecedorAtivo.avaliacao_media>0?fornecedorAtivo.avaliacao_media.toFixed(1):'—'}</div><div class="stat-lbl">Nota média</div></div>`;
+
+    await renderPainelFornecedor(fornecedorAtivo, todasPropostas);
+  } catch(e){
+    main.innerHTML=`<div class="main-empty"><div class="main-empty-icon">⚠️</div><h2>Erro ao carregar</h2></div>`;
+  }
+}
+
+async function renderPainelFornecedor(f, todasPropostas){
+  const main = document.getElementById('main-content');
+  const emoji = catEmojis[f.categoria]||'🏭';
+  const nota = f.avaliacao_media>0?`★ ${f.avaliacao_media.toFixed(1)}`:'★ Sem avaliações';
+
+  // Busca RFQs das propostas
+  const rfqIds = [...new Set(todasPropostas.map(p=>p.rfq_id))];
+  let rfqsMap = {};
+  for(const rid of rfqIds){
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rfqs?id=eq.${rid}&select=*`,{
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+    });
+    const d = await r.json();
+    if(d[0]) rfqsMap[rid] = d[0];
+  }
+
+  const pendentes = todasPropostas.filter(p=>p.status==='aguardando');
+  const respondidas = todasPropostas.filter(p=>p.status!=='aguardando');
+
+  function renderRFQCard(proposta, rfq, isPendente){
+    if(!rfq) return '';
+    return `
+      <div class="rfq-card ${isPendente?'nova':''}">
+        <div class="rfq-card-top">
+          <div>
+            <div class="rfq-card-title">${catEmojis[rfq.categoria]||'📦'} ${rfq.categoria}</div>
+            <div class="rfq-card-id">RFQ #${rfq.id.slice(0,8).toUpperCase()} · ${formatDate(rfq.criado_em)}</div>
+          </div>
+          <span class="status-pill ${isPendente?'pill-aguardando':proposta.status==='aceita'?'pill-aceita':'pill-respondida'}">
+            ${isPendente?'Aguardando':proposta.status==='aceita'?'Aceita':'Respondida'}
+          </span>
+        </div>
+        <div class="rfq-tags">
+          <span class="rfq-tag">📦 ${rfq.quantidade||'—'}</span>
+          <span class="rfq-tag">⏱ ${rfq.prazo||'—'}</span>
+        </div>
+        <div class="rfq-desc">${rfq.descricao}</div>
+        <div class="rfq-actions">
+          ${isPendente
+            ? `<button class="btn btn-green btn-sm" onclick="abrirModal('${proposta.id}','${rfq.categoria}')">Enviar proposta</button>`
+            : `<div style="font-size:12px;color:var(--ink2)">💰 R$ ${Number(proposta.valor).toLocaleString('pt-BR',{minimumFractionDigits:2})} · ⏱ ${proposta.prazo||'—'}</div>`
+          }
+        </div>
+      </div>`;
+  }
+
+  main.innerHTML = `
+    <div class="perfil-card">
+      <div class="perfil-avatar">${emoji}</div>
+      <div class="perfil-info">
+        <div class="perfil-name">${f.nome}</div>
+        <div class="perfil-meta">
+          <span>${f.categoria}</span>
+          <span>📍 ${f.cidade}${f.estado?', '+f.estado:''}</span>
+          <span class="perfil-score">${nota}</span>
+        </div>
+      </div>
+      <a href="fornecedor.html?id=${f.id}" class="btn btn-ghost btn-sm">Ver perfil público</a>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('pendentes',this)">Pendentes <span style="background:var(--amber-bg);color:var(--amber);padding:1px 6px;border-radius:100px;font-size:10px;margin-left:4px">${pendentes.length}</span></button>
+      <button class="tab" onclick="switchTab('respondidas',this)">Respondidas <span style="background:var(--bg3);color:var(--ink3);padding:1px 6px;border-radius:100px;font-size:10px;margin-left:4px">${respondidas.length}</span></button>
+    </div>
+
+    <div class="tab-content active" id="tab-pendentes">
+      <div class="rfq-cards">
+        ${pendentes.length===0
+          ? `<div style="text-align:center;padding:40px;font-size:13px;color:var(--ink3)">Nenhuma RFQ pendente no momento.<br>Quando compradores enviarem pedidos, eles aparecerão aqui.</div>`
+          : pendentes.map(p=>renderRFQCard(p,rfqsMap[p.rfq_id],true)).join('')
+        }
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-respondidas">
+      <div class="rfq-cards">
+        ${respondidas.length===0
+          ? `<div style="text-align:center;padding:40px;font-size:13px;color:var(--ink3)">Nenhuma proposta enviada ainda.</div>`
+          : respondidas.map(p=>renderRFQCard(p,rfqsMap[p.rfq_id],false)).join('')
+        }
+      </div>
+    </div>`;
+}
+
+function switchTab(tab, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+function abrirModal(propostaId, categoria){
+  propostaAtiva = propostaId;
+  document.getElementById('modal-sub').textContent = `Respondendo à RFQ de ${categoria}`;
+  document.getElementById('prop-valor').value='';
+  document.getElementById('prop-prazo').value='';
+  document.getElementById('prop-desc').value='';
+  document.getElementById('modal').style.display='flex';
+}
+
+function fecharModal(e){
+  if(e.target===document.getElementById('modal'))
+    document.getElementById('modal').style.display='none';
+}
+
+async function enviarProposta(){
+  const valor = val('prop-valor');
+  const prazo = val('prop-prazo');
+  if(!valor||!prazo){ alert('Preencha o valor e o prazo.'); return; }
+
+  const btn = document.getElementById('btn-enviar-prop');
+  const btnText = document.getElementById('btn-prop-text');
+  btn.disabled=true;
+  btnText.innerHTML='<span class="spinner"></span> Enviando...';
+
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/propostas?id=eq.${propostaAtiva}`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
+      body: JSON.stringify({ valor:Number(valor), prazo, descricao:val('prop-desc'), status:'respondida' })
+    });
+
+    document.getElementById('modal').style.display='none';
+    alert('Proposta enviada com sucesso!');
+    selecionarFornecedor(fornecedorAtivo.id);
+  } catch(e){
+    alert('Erro ao enviar proposta. Tente novamente.');
+    btn.disabled=false;
+    btnText.textContent='Enviar proposta';
+  }
+}
+
+function logout(){
+  window.location.href = 'login-fornecedor.html';
+}
+
+carregarFornecedores();
+</script>
+</body>
+</html>

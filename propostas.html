@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fornext — Minhas Propostas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#2563eb;--blue-dark:#1e40af;--blue-bg:#eff6ff;--blue-border:#bfdbfe;
+  --ink:#111110;--ink2:#6b7280;--ink3:#9ca3af;
+  --bg:#ffffff;--bg2:#f9fafb;--bg3:#f3f4f6;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-border:#bbf7d0;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-border:#fde68a;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --r:8px;--font:'Inter',system-ui,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg2);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+
+nav{background:var(--bg);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 24px;position:sticky;top:0;z-index:50}
+.nav-inner{display:flex;align-items:center;gap:12px;width:100%}
+.nav-logo{display:flex;align-items:center;gap:7px;text-decoration:none}
+.nav-logo-icon{width:28px;height:28px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.nav-logo-text{font-size:14px;font-weight:700;letter-spacing:-0.03em;color:var(--ink)}
+.nav-logo-text em{font-style:normal;color:var(--blue)}
+.nav-actions{margin-left:auto;display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .15s;text-decoration:none}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:var(--blue-dark)}
+.btn-ghost{background:transparent;color:var(--ink2);border:1.5px solid var(--border2)}
+.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+.btn-sm{padding:6px 12px;font-size:11px}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{opacity:.88}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 56px)}
+
+/* SIDEBAR */
+.sidebar{background:var(--bg);border-right:1px solid var(--border);padding:20px 16px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.sidebar-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:10px;padding:0 4px}
+.rfq-list{display:flex;flex-direction:column;gap:4px}
+.rfq-item{padding:10px 12px;border-radius:var(--r);cursor:pointer;transition:all .15s;border:1.5px solid transparent}
+.rfq-item:hover{background:var(--bg2)}
+.rfq-item.active{background:var(--blue-bg);border-color:var(--blue-border)}
+.rfq-item-cat{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.rfq-item-meta{font-size:10px;color:var(--ink3)}
+.rfq-item-status{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:2px 7px;border-radius:100px;margin-top:5px}
+.status-aberta{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.status-fechada{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.sidebar-empty{font-size:12px;color:var(--ink3);padding:12px 4px;line-height:1.6}
+
+/* MAIN */
+.main{padding:28px}
+.main-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;text-align:center;gap:12px}
+.main-empty-icon{font-size:36px}
+.main-empty h2{font-size:16px;font-weight:600;color:var(--ink)}
+.main-empty p{font-size:13px;color:var(--ink2);max-width:300px;line-height:1.6}
+
+/* RFQ HEADER */
+.rfq-header{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:16px}
+.rfq-header-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.rfq-title{font-size:16px;font-weight:700;letter-spacing:-0.02em;color:var(--ink);margin-bottom:4px}
+.rfq-id{font-size:11px;color:var(--ink3);font-family:monospace}
+.rfq-meta-row{display:flex;gap:8px;flex-wrap:wrap}
+.rfq-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:600;background:var(--bg3);color:var(--ink2)}
+.rfq-desc-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;font-size:12px;color:var(--ink2);line-height:1.6}
+
+/* PROPOSALS */
+.proposals-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.proposals-title{font-size:13px;font-weight:700;color:var(--ink)}
+.proposals-count{font-size:12px;color:var(--ink3)}
+.proposals-grid{display:flex;flex-direction:column;gap:12px}
+
+/* PROPOSAL CARD */
+.proposal-card{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:20px;transition:border-color .15s}
+.proposal-card.melhor{border-color:var(--green);background:var(--green-bg)}
+.proposal-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.proposal-forn-info{flex:1}
+.proposal-forn-name{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.proposal-forn-meta{font-size:11px;color:var(--ink3)}
+.proposal-score{font-size:12px;font-weight:700;color:var(--green)}
+.proposal-badge-best{background:var(--green);color:#fff;font-size:9px;font-weight:700;padding:3px 8px;border-radius:100px;text-transform:uppercase;letter-spacing:.05em}
+.proposal-badge-aguard{background:var(--amber-bg);color:var(--amber);font-size:9px;font-weight:700;padding:3px 8px;border-radius:100px;border:1px solid var(--amber-border)}
+.proposal-values{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.proposal-value-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px}
+.proposal-value-box.highlight{background:var(--blue-bg);border-color:var(--blue-border)}
+.proposal-value-label{font-size:10px;color:var(--ink3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em}
+.proposal-value-num{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-0.02em}
+.proposal-value-box.highlight .proposal-value-num{color:var(--blue)}
+.proposal-desc{font-size:12px;color:var(--ink2);line-height:1.55;margin-bottom:14px}
+.proposal-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* AGUARDANDO */
+.aguardando-card{background:var(--bg);border:1.5px dashed var(--border2);border-radius:12px;padding:20px;display:flex;align-items:center;gap:14px}
+.aguardando-avatar{width:40px;height:40px;border-radius:10px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.aguardando-info{flex:1}
+.aguardando-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.aguardando-sub{font-size:11px;color:var(--ink3)}
+.aguardando-status{font-size:10px;font-weight:700;color:var(--amber);background:var(--amber-bg);padding:3px 8px;border-radius:100px;border:1px solid var(--amber-border)}
+
+/* ECONOMIA */
+.economia-bar{background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.economia-label{font-size:12px;color:var(--ink2)}
+.economia-valor{font-size:14px;font-weight:700;color:var(--green)}
+
+/* SKELETON */
+.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--border) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:6px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .main{padding:16px}
+  .proposal-values{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <rect x="2" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+          <rect x="9" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+          <rect x="2" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+          <rect x="9" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">For<em>next</em></span>
+    </a>
+    <div class="nav-actions">
+      <a href="fornecedores.html" class="btn btn-ghost">Fornecedores</a>
+      <a href="rfq.html" class="btn btn-blue">+ Nova RFQ</a>
+    </div>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Minhas RFQs</div>
+    <div id="rfq-sidebar-list">
+      <div class="skeleton" style="height:60px;margin-bottom:6px;border-radius:var(--r)"></div>
+      <div class="skeleton" style="height:60px;margin-bottom:6px;border-radius:var(--r)"></div>
+      <div class="skeleton" style="height:60px;border-radius:var(--r)"></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main" id="main-content">
+    <div class="main-empty">
+      <div class="main-empty-icon">📋</div>
+      <h2>Selecione uma RFQ</h2>
+      <p>Escolha uma RFQ na lista ao lado para ver as propostas recebidas.</p>
+    </div>
+  </main>
+
+</div>
+
+<script>
+const SUPABASE_URL = 'https://xnpvysulxouzxqdqhwuq.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucHZ5c3VseG91enhxZHFod3VxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzOTU0MjgsImV4cCI6MjA5NTk3MTQyOH0.dmQRu68NfNq2nSN3YAszVR9u7yf4YgyevindTBWIYV8';
+
+const compradorId = localStorage.getItem('comprador_id');
+const catEmojis = {
+  'Uniformes Corporativos':'👕','EPI':'🦺','Tintas Industriais':'🎨',
+  'MRO':'🔧','Embalagens':'📦','Limpeza e Higiene':'🧹',
+  'Material de Escritório':'📎','TI e Periféricos':'💻',
+  'Alimentação Corporativa':'🍽','Facilities':'🏢',
+  'Logística':'🚚','Materiais Elétricos':'⚡'
+};
+
+function formatDate(dt){ return new Date(dt).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}); }
+function formatCurrency(v){ return v ? 'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2}) : '—'; }
+
+async function carregarRFQs(){
+  try {
+    let url = `${SUPABASE_URL}/rest/v1/rfqs?select=*&order=criado_em.desc`;
+    if(compradorId) url += `&comprador_id=eq.${compradorId}`;
+
+    const res = await fetch(url, {
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+    });
+    const rfqs = await res.json();
+
+    const sidebar = document.getElementById('rfq-sidebar-list');
+
+    if(!rfqs.length){
+      sidebar.innerHTML = `<div class="sidebar-empty">Nenhuma RFQ encontrada.<br><a href="rfq.html" style="color:var(--blue);font-weight:600">Enviar primeira RFQ →</a></div>`;
+      return;
+    }
+
+    sidebar.innerHTML = rfqs.map(r => `
+      <div class="rfq-item" id="rfq-item-${r.id}" onclick="selecionarRFQ('${r.id}')">
+        <div class="rfq-item-cat">${catEmojis[r.categoria]||'📦'} ${r.categoria}</div>
+        <div class="rfq-item-meta">${r.quantidade||'—'} · ${formatDate(r.criado_em)}</div>
+        <div class="rfq-item-status status-${r.status}">${r.status}</div>
+      </div>`).join('');
+
+    // Auto-seleciona última RFQ ou a da URL
+    const params = new URLSearchParams(window.location.search);
+    const rfqParam = params.get('rfq');
+    const ultima = localStorage.getItem('ultima_rfq_id');
+    const alvo = rfqParam || ultima;
+    const primeiraId = alvo && rfqs.find(r=>r.id===alvo) ? alvo : rfqs[0].id;
+    selecionarRFQ(primeiraId);
+
+  } catch(e){
+    document.getElementById('rfq-sidebar-list').innerHTML =
+      `<div class="sidebar-empty" style="color:var(--red)">Erro ao carregar RFQs.</div>`;
+  }
+}
+
+async function selecionarRFQ(rfqId){
+  // Marca ativo na sidebar
+  document.querySelectorAll('.rfq-item').forEach(el => el.classList.remove('active'));
+  const item = document.getElementById('rfq-item-'+rfqId);
+  if(item) item.classList.add('active');
+
+  const main = document.getElementById('main-content');
+  main.innerHTML = `
+    <div class="rfq-header">
+      <div class="skeleton" style="height:18px;width:40%;margin-bottom:8px"></div>
+      <div class="skeleton" style="height:12px;width:60%"></div>
+    </div>`;
+
+  try {
+    // Busca RFQ
+    const resR = await fetch(`${SUPABASE_URL}/rest/v1/rfqs?id=eq.${rfqId}&select=*`, {
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+    });
+    const rfqs = await resR.json();
+    const rfq = rfqs[0];
+    if(!rfq){ main.innerHTML = `<div class="main-empty"><div class="main-empty-icon">⚠️</div><h2>RFQ não encontrada</h2></div>`; return; }
+
+    // Busca propostas com dados do fornecedor
+    const resP = await fetch(`${SUPABASE_URL}/rest/v1/propostas?rfq_id=eq.${rfqId}&select=*,fornecedores(id,nome,categoria,cidade,estado,avaliacao_media)`, {
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+    });
+    const propostas = await resP.json();
+
+    renderRFQ(rfq, propostas);
+
+  } catch(e){
+    main.innerHTML = `<div class="main-empty"><div class="main-empty-icon">⚠️</div><h2>Erro ao carregar</h2><p>Verifique sua conexão e tente novamente.</p></div>`;
+  }
+}
+
+function renderRFQ(rfq, propostas){
+  const main = document.getElementById('main-content');
+  const emoji = catEmojis[rfq.categoria]||'📦';
+
+  // Separa com e sem proposta
+  const comProposta = propostas.filter(p => p.valor);
+  const aguardando = propostas.filter(p => !p.valor);
+
+  // Calcula economia
+  let economiaHTML = '';
+  if(comProposta.length >= 2){
+    const valores = comProposta.map(p=>Number(p.valor)).sort((a,b)=>a-b);
+    const economia = valores[valores.length-1] - valores[0];
+    if(economia > 0){
+      economiaHTML = `
+        <div class="economia-bar">
+          <span class="economia-label">💡 Economia potencial vs. proposta mais cara</span>
+          <span class="economia-valor">− ${formatCurrency(economia)}</span>
+        </div>`;
+    }
+  }
+
+  // Menor valor para badge "melhor"
+  const menorValor = comProposta.length ? Math.min(...comProposta.map(p=>Number(p.valor))) : null;
+
+  const propostasHTML = comProposta.length === 0 && aguardando.length === 0
+    ? `<div style="text-align:center;padding:32px;font-size:13px;color:var(--ink3)">Nenhuma proposta ainda.</div>`
+    : [
+        ...comProposta
+          .sort((a,b) => Number(a.valor) - Number(b.valor))
+          .map((p, i) => {
+            const forn = p.fornecedores || {};
+            const isMelhor = Number(p.valor) === menorValor;
+            const nota = forn.avaliacao_media > 0 ? `★ ${forn.avaliacao_media.toFixed(1)}` : 'Novo';
+            return `
+              <div class="proposal-card ${isMelhor?'melhor':''}">
+                <div class="proposal-card-top">
+                  <div class="proposal-forn-info">
+                    <div class="proposal-forn-name">${forn.nome||'Fornecedor'}</div>
+                    <div class="proposal-forn-meta">${forn.categoria||''} · ${forn.cidade||''}${forn.estado?', '+forn.estado:''}</div>
+                    <div class="proposal-score" style="margin-top:4px">${nota}</div>
+                  </div>
+                  <div>${isMelhor ? '<span class="proposal-badge-best">Melhor proposta</span>' : ''}</div>
+                </div>
+                <div class="proposal-values">
+                  <div class="proposal-value-box highlight">
+                    <div class="proposal-value-label">Valor</div>
+                    <div class="proposal-value-num">${formatCurrency(p.valor)}</div>
+                  </div>
+                  <div class="proposal-value-box">
+                    <div class="proposal-value-label">Prazo</div>
+                    <div class="proposal-value-num" style="font-size:13px">${p.prazo||'—'}</div>
+                  </div>
+                  <div class="proposal-value-box">
+                    <div class="proposal-value-label">Status</div>
+                    <div class="proposal-value-num" style="font-size:12px;color:var(--green)">${p.status||'—'}</div>
+                  </div>
+                </div>
+                ${p.descricao ? `<div class="proposal-desc">${p.descricao}</div>` : ''}
+                <div class="proposal-actions">
+                  <a href="fornecedor.html?id=${forn.id}" class="btn btn-ghost btn-sm">Ver perfil</a>
+                  ${rfq.status === 'aberta' ? `<button class="btn btn-green btn-sm" onclick="fecharNegocio('${rfq.id}','${p.id}','${forn.nome}')">✓ Fechar negócio</button>` : ''}
+                  ${rfq.status === 'aberta' ? `<a href="avaliar.html?fornecedor=${forn.id}&rfq=${rfq.id}&nome=${encodeURIComponent(forn.nome)}" class="btn btn-ghost btn-sm">Avaliar</a>` : ''}
+                </div>
+              </div>`;
+          }),
+        ...aguardando.map(p => {
+          const forn = p.fornecedores || {};
+          return `
+            <div class="aguardando-card">
+              <div class="aguardando-avatar">${catEmojis[forn.categoria]||'🏭'}</div>
+              <div class="aguardando-info">
+                <div class="aguardando-name">${forn.nome||'Fornecedor'}</div>
+                <div class="aguardando-sub">${forn.cidade||''}${forn.estado?', '+forn.estado:''}</div>
+              </div>
+              <div class="aguardando-status">Aguardando proposta</div>
+            </div>`;
+        })
+      ].join('');
+
+  main.innerHTML = `
+    <div class="rfq-header">
+      <div class="rfq-header-top">
+        <div>
+          <div class="rfq-title">${emoji} ${rfq.categoria}</div>
+          <div class="rfq-id">RFQ #${rfq.id.slice(0,8).toUpperCase()} · ${formatDate(rfq.criado_em)}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="rfq-item-status status-${rfq.status}">${rfq.status}</span>
+          <a href="rfq.html" class="btn btn-ghost btn-sm">+ Nova RFQ</a>
+        </div>
+      </div>
+      <div class="rfq-meta-row" style="margin-bottom:12px">
+        <span class="rfq-tag">📦 ${rfq.quantidade||'—'}</span>
+        <span class="rfq-tag">⏱ ${rfq.prazo||'—'}</span>
+        <span class="rfq-tag">💬 ${propostas.length} fornecedor${propostas.length!==1?'es':''}</span>
+      </div>
+      <div class="rfq-desc-box">${rfq.descricao}</div>
+    </div>
+
+    ${economiaHTML}
+
+    <div class="proposals-header">
+      <div class="proposals-title">Propostas</div>
+      <div class="proposals-count">${comProposta.length} recebida${comProposta.length!==1?'s':''} · ${aguardando.length} aguardando</div>
+    </div>
+    <div class="proposals-grid">${propostasHTML}</div>`;
+}
+
+async function fecharNegocio(rfqId, propostaId, fornNome){
+  if(!confirm(`Confirmar fechamento com ${fornNome}? A RFQ será marcada como fechada.`)) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/rfqs?id=eq.${rfqId}`, {
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
+      body: JSON.stringify({status:'fechada'})
+    });
+    await fetch(`${SUPABASE_URL}/rest/v1/propostas?id=eq.${propostaId}`, {
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
+      body: JSON.stringify({status:'aceita'})
+    });
+    alert(`Negócio fechado com ${fornNome}!`);
+    carregarRFQs();
+    selecionarRFQ(rfqId);
+  } catch(e){ alert('Erro ao fechar negócio.'); }
+}
+
+carregarRFQs();
+</script>
+</body>
+</html>

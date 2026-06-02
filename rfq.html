@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fornext — Solicitar Orçamento</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#2563eb;--blue-dark:#1e40af;--blue-bg:#eff6ff;--blue-border:#bfdbfe;
+  --ink:#111110;--ink2:#6b7280;--ink3:#9ca3af;
+  --bg:#ffffff;--bg2:#f9fafb;--bg3:#f3f4f6;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-border:#bbf7d0;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-border:#fde68a;
+  --r:8px;--font:'Inter',system-ui,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg2);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+
+nav{background:var(--bg);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 24px;position:sticky;top:0;z-index:50}
+.nav-inner{display:flex;align-items:center;gap:12px;width:100%}
+.nav-logo{display:flex;align-items:center;gap:7px;text-decoration:none}
+.nav-logo-icon{width:28px;height:28px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.nav-logo-text{font-size:14px;font-weight:700;letter-spacing:-0.03em;color:var(--ink)}
+.nav-logo-text em{font-style:normal;color:var(--blue)}
+.nav-back{margin-left:auto;font-size:12px;color:var(--ink2);text-decoration:none}
+.nav-back:hover{color:var(--blue)}
+
+/* LAYOUT */
+.page{max-width:780px;margin:0 auto;padding:40px 24px 80px}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:22px;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px}
+.page-header p{font-size:13px;color:var(--ink2);line-height:1.6}
+
+/* PROGRESS */
+.progress{display:flex;align-items:center;gap:0;margin-bottom:28px}
+.prog-step{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600}
+.prog-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.prog-step.active .prog-num{background:var(--blue);color:#fff}
+.prog-step.done .prog-num{background:var(--green);color:#fff}
+.prog-step.inactive .prog-num{background:var(--bg3);color:var(--ink3)}
+.prog-step.active .prog-label{color:var(--ink)}
+.prog-step.done .prog-label{color:var(--green)}
+.prog-step.inactive .prog-label{color:var(--ink3)}
+.prog-line{flex:1;height:1px;background:var(--border);margin:0 8px}
+.prog-line.done{background:var(--green)}
+
+/* CARDS */
+.card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:14px}
+.card-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:16px;display:flex;align-items:center;gap:7px}
+
+/* FORNECEDOR SELECIONADO */
+.fornecedor-tag{display:flex;align-items:center;gap:10px;background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:var(--r);padding:10px 14px;margin-bottom:14px}
+.fornecedor-tag-info{flex:1}
+.fornecedor-tag-name{font-size:13px;font-weight:600;color:var(--blue)}
+.fornecedor-tag-sub{font-size:11px;color:var(--ink2)}
+.fornecedor-tag-remove{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:14px;padding:2px;transition:color .15s}
+.fornecedor-tag-remove:hover{color:var(--red)}
+
+/* FORNECEDORES LIST */
+.forn-search-wrap{position:relative;margin-bottom:10px}
+.forn-search-wrap input{width:100%;padding:9px 12px 9px 34px;border:1.5px solid var(--border2);border-radius:var(--r);font-size:13px;font-family:var(--font);background:var(--bg);color:var(--ink);outline:none;transition:border-color .15s}
+.forn-search-wrap input:focus{border-color:var(--blue)}
+.forn-search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ink3);font-size:13px}
+.forn-list{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto}
+.forn-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;background:var(--bg)}
+.forn-item:hover{border-color:var(--blue-border);background:var(--blue-bg)}
+.forn-item.selected{border-color:var(--blue);background:var(--blue-bg)}
+.forn-item-emoji{font-size:16px;flex-shrink:0}
+.forn-item-info{flex:1}
+.forn-item-name{font-size:12px;font-weight:600;color:var(--ink)}
+.forn-item-meta{font-size:11px;color:var(--ink3)}
+.forn-item-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;transition:all .15s}
+.forn-item.selected .forn-item-check{background:var(--blue);border-color:var(--blue);color:#fff}
+.forn-count{font-size:11px;color:var(--ink2);margin-top:8px}
+
+/* FORM FIELDS */
+.field-grid{display:flex;flex-direction:column;gap:14px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11px;font-weight:600;color:var(--ink);letter-spacing:.02em}
+.field label span{color:var(--red);margin-left:2px}
+.field input,.field select,.field textarea{padding:9px 12px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg);color:var(--ink);font-size:13px;font-family:var(--font);outline:none;transition:border-color .15s;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue)}
+.field input::placeholder,.field textarea::placeholder{color:var(--ink3)}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:32px}
+.field textarea{resize:vertical;min-height:90px;line-height:1.5}
+
+/* GUEST BANNER */
+.guest-banner{background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:12px;color:var(--amber)}
+.guest-banner a{color:var(--blue);font-weight:600;text-decoration:none}
+.guest-banner a:hover{text-decoration:underline}
+
+/* SUMMARY */
+.summary-list{display:flex;flex-direction:column;gap:8px}
+.summary-item{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--bg2);border-radius:7px}
+.summary-label{font-size:12px;color:var(--ink2)}
+.summary-value{font-size:12px;font-weight:600;color:var(--ink);text-align:right;max-width:60%}
+.summary-fornecedores{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.summary-forn-tag{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--blue);font-weight:600}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .15s}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:var(--blue-dark)}
+.btn-blue:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--ink2);border:1.5px solid var(--border2)}
+.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* SUCCESS */
+.success-screen{text-align:center;padding:40px 16px}
+.success-icon{width:52px;height:52px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:22px}
+.success-screen h2{font-size:19px;font-weight:700;letter-spacing:-0.02em;margin-bottom:8px}
+.success-screen p{font-size:13px;color:var(--ink2);line-height:1.7;max-width:360px;margin:0 auto 8px}
+.rfq-id-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 16px;display:inline-flex;align-items:center;gap:8px;margin:16px auto;font-family:monospace}
+.rfq-id-label{font-size:10px;color:var(--ink3)}
+.rfq-id-value{font-size:13px;font-weight:700;color:var(--blue)}
+.success-actions{display:flex;flex-direction:column;gap:8px;max-width:320px;margin:0 auto}
+.success-btn{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;font-size:12px;color:var(--ink2);text-decoration:none;transition:border-color .15s;font-weight:500}
+.success-btn:hover{border-color:var(--blue);color:var(--blue)}
+
+.step{display:none}
+.step.active{display:block}
+
+@media(max-width:560px){
+  .field-row{grid-template-columns:1fr}
+  .btn-row{flex-direction:column-reverse}
+  .btn{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <rect x="2" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+          <rect x="9" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+          <rect x="2" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+          <rect x="9" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">For<em>next</em></span>
+    </a>
+    <a href="fornecedores.html" class="nav-back">← Fornecedores</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="page-header">
+    <h1>Solicitar orçamento (RFQ)</h1>
+    <p>Preencha os detalhes do seu pedido e envie para um ou mais fornecedores ao mesmo tempo.</p>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress">
+    <div class="prog-step active" id="prog-1"><div class="prog-num">1</div><div class="prog-label">Fornecedores</div></div>
+    <div class="prog-line" id="line-1"></div>
+    <div class="prog-step inactive" id="prog-2"><div class="prog-num">2</div><div class="prog-label">Pedido</div></div>
+    <div class="prog-line" id="line-2"></div>
+    <div class="prog-step inactive" id="prog-3"><div class="prog-num">3</div><div class="prog-label">Confirmar</div></div>
+  </div>
+
+  <!-- STEP 1: FORNECEDORES -->
+  <div class="step active" id="step-1">
+    <div id="guest-banner-wrap"></div>
+    <div class="card">
+      <div class="card-title">🏭 Selecione os fornecedores</div>
+      <div class="forn-search-wrap">
+        <span class="forn-search-icon">🔍</span>
+        <input type="text" id="forn-search" placeholder="Buscar por nome ou categoria..." oninput="filtrarFornecedores()">
+      </div>
+      <div class="forn-list" id="forn-list">
+        <div style="text-align:center;padding:20px;font-size:12px;color:var(--ink3)">Carregando fornecedores...</div>
+      </div>
+      <div class="forn-count" id="forn-count"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-blue" onclick="irStep2()">Próximo →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: PEDIDO -->
+  <div class="step" id="step-2">
+    <div class="card">
+      <div class="card-title">📋 Detalhes do pedido</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Categoria <span>*</span></label>
+          <select id="categoria">
+            <option value="">Selecione a categoria</option>
+            <option>Uniformes Corporativos</option>
+            <option>EPI</option>
+            <option>Tintas Industriais</option>
+            <option>MRO</option>
+            <option>Embalagens</option>
+            <option>Limpeza e Higiene</option>
+            <option>Material de Escritório</option>
+            <option>TI e Periféricos</option>
+            <option>Alimentação Corporativa</option>
+            <option>Facilities</option>
+            <option>Logística</option>
+            <option>Materiais Elétricos</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Descrição do pedido <span>*</span></label>
+          <textarea id="descricao" placeholder="Descreva o que você precisa com o máximo de detalhes possível. Ex: 200 camisetas polo manga curta bordadas com logo, tamanhos P, M, G e GG em proporções iguais..."></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Quantidade estimada <span>*</span></label>
+            <input type="text" id="quantidade" placeholder="Ex: 500 unidades, 10 caixas...">
+          </div>
+          <div class="field">
+            <label>Prazo desejado <span>*</span></label>
+            <select id="prazo">
+              <option value="">Selecione</option>
+              <option>Até 7 dias</option>
+              <option>8 a 15 dias</option>
+              <option>16 a 30 dias</option>
+              <option>30 a 60 dias</option>
+              <option>Sem prazo definido</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="irStep1()">← Voltar</button>
+      <button class="btn btn-blue" onclick="irStep3()">Revisar pedido →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: CONFIRMAÇÃO -->
+  <div class="step" id="step-3">
+    <div class="card">
+      <div class="card-title">✅ Revisar e confirmar</div>
+      <div class="summary-list" id="summary-list"></div>
+      <div style="margin-top:14px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:8px">Enviando para</div>
+        <div class="summary-fornecedores" id="summary-fornecedores"></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="irStep2()">← Voltar</button>
+      <button class="btn btn-blue" id="btn-submit" onclick="enviarRFQ()">
+        <span id="btn-text">Enviar RFQ</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="step" id="step-success">
+    <div class="card">
+      <div class="success-screen">
+        <div class="success-icon">✓</div>
+        <h2>RFQ enviada!</h2>
+        <p>Seu pedido de orçamento foi enviado para os fornecedores selecionados.</p>
+        <p style="color:var(--ink3)">Você receberá as propostas em breve.</p>
+        <div class="rfq-id-box">
+          <span class="rfq-id-label">RFQ</span>
+          <span class="rfq-id-value" id="rfq-id-display">#—</span>
+        </div>
+        <div class="success-actions">
+          <a href="propostas.html" class="success-btn">📊 Ver minhas propostas</a>
+          <a href="fornecedores.html" class="success-btn">🔍 Buscar mais fornecedores</a>
+          <a href="rfq.html" class="success-btn">📋 Enviar nova RFQ</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SUPABASE_URL = 'https://xnpvysulxouzxqdqhwuq.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucHZ5c3VseG91enhxZHFod3VxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzOTU0MjgsImV4cCI6MjA5NTk3MTQyOH0.dmQRu68NfNq2nSN3YAszVR9u7yf4YgyevindTBWIYV8';
+
+const catEmojis = {
+  'Uniformes Corporativos':'👕','EPI':'🦺','Tintas Industriais':'🎨',
+  'MRO':'🔧','Embalagens':'📦','Limpeza e Higiene':'🧹',
+  'Material de Escritório':'📎','TI e Periféricos':'💻',
+  'Alimentação Corporativa':'🍽','Facilities':'🏢',
+  'Logística':'🚚','Materiais Elétricos':'⚡'
+};
+
+let todosFornecedores = [];
+let selecionados = [];
+let compradorId = localStorage.getItem('comprador_id') || null;
+
+// Checa se veio com fornecedor pré-selecionado na URL
+const params = new URLSearchParams(window.location.search);
+const fornPreId = params.get('fornecedor');
+const fornPreNome = params.get('nome');
+
+// Banner de convidado
+if(!compradorId){
+  document.getElementById('guest-banner-wrap').innerHTML = `
+    <div class="guest-banner">
+      ⚠️ Você não está logado. 
+      <a href="cadastro-comprador.html">Crie sua conta gratuita</a> 
+      &nbsp;para acompanhar suas RFQs e propostas.
+    </div>`;
+}
+
+async function carregarFornecedores(){
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/fornecedores?select=id,nome,categoria,cidade,estado,avaliacao_media&ativo=eq.true&order=avaliacao_media.desc`, {
+      headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+    });
+    todosFornecedores = await res.json();
+
+    // Pré-seleciona se veio da URL
+    if(fornPreId){
+      const forn = todosFornecedores.find(f => f.id === fornPreId);
+      if(forn) selecionados = [forn];
+    }
+
+    renderFornecedores(todosFornecedores);
+  } catch(e){
+    document.getElementById('forn-list').innerHTML = `<div style="text-align:center;padding:20px;font-size:12px;color:var(--red)">Erro ao carregar fornecedores.</div>`;
+  }
+}
+
+function filtrarFornecedores(){
+  const q = document.getElementById('forn-search').value.toLowerCase();
+  const filtrados = q ? todosFornecedores.filter(f =>
+    f.nome.toLowerCase().includes(q) || f.categoria?.toLowerCase().includes(q)
+  ) : todosFornecedores;
+  renderFornecedores(filtrados);
+}
+
+function renderFornecedores(lista){
+  const cont = document.getElementById('forn-list');
+  if(!lista.length){
+    cont.innerHTML = `<div style="text-align:center;padding:20px;font-size:12px;color:var(--ink3)">Nenhum fornecedor encontrado.</div>`;
+    return;
+  }
+  cont.innerHTML = lista.map(f => {
+    const sel = selecionados.some(s => s.id === f.id);
+    const nota = f.avaliacao_media > 0 ? `★ ${f.avaliacao_media.toFixed(1)}` : 'Novo';
+    return `
+      <div class="forn-item ${sel?'selected':''}" onclick="toggleFornecedor('${f.id}')">
+        <div class="forn-item-emoji">${catEmojis[f.categoria]||'🏭'}</div>
+        <div class="forn-item-info">
+          <div class="forn-item-name">${f.nome}</div>
+          <div class="forn-item-meta">${f.categoria} · ${f.cidade||''}${f.estado?', '+f.estado:''} · ${nota}</div>
+        </div>
+        <div class="forn-item-check">${sel?'✓':''}</div>
+      </div>`;
+  }).join('');
+  document.getElementById('forn-count').textContent =
+    selecionados.length === 0 ? 'Nenhum selecionado' :
+    selecionados.length === 1 ? '1 fornecedor selecionado' :
+    `${selecionados.length} fornecedores selecionados`;
+}
+
+function toggleFornecedor(id){
+  const forn = todosFornecedores.find(f => f.id === id);
+  const idx = selecionados.findIndex(s => s.id === id);
+  if(idx >= 0) selecionados.splice(idx,1);
+  else selecionados.push(forn);
+  renderFornecedores(document.getElementById('forn-search').value
+    ? todosFornecedores.filter(f => f.nome.toLowerCase().includes(document.getElementById('forn-search').value.toLowerCase()) || f.categoria?.toLowerCase().includes(document.getElementById('forn-search').value.toLowerCase()))
+    : todosFornecedores);
+}
+
+function val(id){ return document.getElementById(id)?.value?.trim()||''; }
+
+function showStep(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step-'+n).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function updateProgress(step){
+  for(let i=1;i<=3;i++){
+    const el = document.getElementById('prog-'+i);
+    const line = document.getElementById('line-'+i);
+    el.className='prog-step '+(i<step?'done':i===step?'active':'inactive');
+    if(line) line.className='prog-line '+(i<step?'done':'');
+  }
+}
+
+function irStep1(){ showStep(1); updateProgress(1); }
+
+function irStep2(){
+  if(!selecionados.length){ alert('Selecione pelo menos um fornecedor.'); return; }
+  showStep(2); updateProgress(2);
+
+  // Pré-seleciona categoria se todos os selecionados forem da mesma
+  const cats = [...new Set(selecionados.map(f=>f.categoria))];
+  if(cats.length===1){
+    const sel = document.getElementById('categoria');
+    for(let o of sel.options) if(o.value===cats[0]) { sel.value=cats[0]; break; }
+  }
+}
+
+function irStep3(){
+  if(!val('categoria')||!val('descricao')||!val('quantidade')||!val('prazo')){
+    alert('Preencha todos os campos obrigatórios.'); return;
+  }
+  showStep(3); updateProgress(3);
+
+  document.getElementById('summary-list').innerHTML = `
+    <div class="summary-item"><span class="summary-label">Categoria</span><span class="summary-value">${val('categoria')}</span></div>
+    <div class="summary-item"><span class="summary-label">Quantidade</span><span class="summary-value">${val('quantidade')}</span></div>
+    <div class="summary-item"><span class="summary-label">Prazo desejado</span><span class="summary-value">${val('prazo')}</span></div>
+    <div class="summary-item"><span class="summary-label">Descrição</span><span class="summary-value">${val('descricao')}</span></div>`;
+
+  document.getElementById('summary-fornecedores').innerHTML =
+    selecionados.map(f=>`<span class="summary-forn-tag">${f.nome}</span>`).join('');
+}
+
+async function enviarRFQ(){
+  const btn = document.getElementById('btn-submit');
+  const btnText = document.getElementById('btn-text');
+  btn.disabled=true;
+  btnText.innerHTML='<span class="spinner"></span> Enviando...';
+
+  try {
+    const rfqData = {
+      categoria: val('categoria'),
+      descricao: val('descricao'),
+      quantidade: val('quantidade'),
+      prazo: val('prazo'),
+      status: 'aberta',
+      comprador_id: compradorId || null
+    };
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rfqs`, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey':SUPABASE_KEY,
+        'Authorization':`Bearer ${SUPABASE_KEY}`,
+        'Prefer':'return=representation'
+      },
+      body: JSON.stringify(rfqData)
+    });
+
+    const data = await res.json();
+    if(!res.ok){ throw new Error(data?.message||'Erro ao salvar RFQ'); }
+
+    const rfqId = data[0].id;
+
+    // Cria propostas em aberto para cada fornecedor selecionado
+    for(const forn of selecionados){
+      await fetch(`${SUPABASE_URL}/rest/v1/propostas`, {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'apikey':SUPABASE_KEY,
+          'Authorization':`Bearer ${SUPABASE_KEY}`
+        },
+        body: JSON.stringify({ rfq_id: rfqId, fornecedor_id: forn.id, status:'aguardando' })
+      });
+    }
+
+    // Salva no localStorage para consulta
+    localStorage.setItem('ultima_rfq_id', rfqId);
+
+    document.getElementById('rfq-id-display').textContent = '#' + rfqId.slice(0,8).toUpperCase();
+    showStep('success');
+
+  } catch(e){
+    alert('Erro ao enviar RFQ: '+e.message);
+    btn.disabled=false;
+    btnText.textContent='Enviar RFQ';
+  }
+}
+
+carregarFornecedores();
+</script>
+</body>
+</html>
