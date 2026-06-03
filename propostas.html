@@ -120,6 +120,13 @@ nav{background:var(--bg);border-bottom:1px solid var(--border);height:56px;displ
 </style>
 </head>
 <body>
+<script>
+(function(){
+  var s = JSON.parse(localStorage.getItem('fornext_session')||'null');
+  if(!s) window.location.href = 'login.html';
+})();
+</script>
+
 
 <nav>
   <div class="nav-inner">

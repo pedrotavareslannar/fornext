@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fornext — Painel Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#2563eb;--blue-dark:#1e40af;--blue-bg:#eff6ff;--blue-border:#bfdbfe;
+  --ink:#111110;--ink2:#6b7280;--ink3:#9ca3af;
+  --bg:#ffffff;--bg2:#f9fafb;--bg3:#f3f4f6;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-border:#bbf7d0;
+  --amber:#d97706;--amber-bg:#fffbeb;--amber-border:#fde68a;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --r:8px;--font:'Inter',system-ui,sans-serif;
+}
+body{font-family:var(--font);background:var(--bg2);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+nav{background:var(--bg);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 24px;position:sticky;top:0;z-index:50}
+.nav-inner{display:flex;align-items:center;gap:10px;width:100%}
+.nav-logo{display:flex;align-items:center;gap:7px;text-decoration:none}
+.nav-logo-icon{width:28px;height:28px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.nav-logo-text{font-size:14px;font-weight:700;letter-spacing:-0.03em;color:var(--ink)}
+.nav-logo-text em{font-style:normal;color:var(--blue)}
+.admin-badge{background:var(--red-bg);color:var(--red);border:1px solid #fecaca;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px}
+.nav-actions{margin-left:auto;display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .15s;text-decoration:none}
+.btn-ghost{background:transparent;color:var(--ink2);border:1.5px solid var(--border2)}
+.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{opacity:.88}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:var(--blue-dark)}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+.page{max-width:1100px;margin:0 auto;padding:32px 24px 80px}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.stat-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:20px}
+.stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:8px}
+.stat-num{font-size:28px;font-weight:700;letter-spacing:-0.04em;color:var(--ink);margin-bottom:3px}
+.stat-sub{font-size:11px;color:var(--ink2)}
+
+/* TABS */
+.tabs{display:flex;gap:4px;background:var(--bg3);border-radius:var(--r);padding:4px;width:fit-content;margin-bottom:20px}
+.tab{padding:7px 18px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--ink2);transition:all .15s;font-family:var(--font)}
+.tab.active{background:var(--bg);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* TABLE */
+.table-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.table-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.table-title{font-size:13px;font-weight:700;color:var(--ink)}
+.table-count{font-size:11px;color:var(--ink3)}
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);padding:10px 20px;text-align:left;background:var(--bg2);border-bottom:1px solid var(--border)}
+td{font-size:12px;color:var(--ink2);padding:12px 20px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg2)}
+.td-name{font-weight:600;color:var(--ink)}
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:600}
+.tag-blue{background:var(--blue-bg);color:var(--blue)}
+.tag-green{background:var(--green-bg);color:var(--green)}
+.tag-amber{background:var(--amber-bg);color:var(--amber)}
+.tag-red{background:var(--red-bg);color:var(--red)}
+
+.skeleton{background:linear-gradient(90deg,var(--bg3) 25%,var(--border) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:6px;height:40px;margin:8px 0}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+.empty{text-align:center;padding:40px;font-size:13px;color:var(--ink3)}
+
+@media(max-width:768px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .page{padding:20px 16px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <rect x="2" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+          <rect x="9" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+          <rect x="2" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+          <rect x="9" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">For<em>next</em></span>
+    </a>
+    <span class="admin-badge">ADMIN</span>
+    <div class="nav-actions">
+      <a href="fornecedores.html" class="btn btn-ghost">Ver plataforma</a>
+      <button class="btn btn-red" onclick="logout()">Sair</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div style="margin-bottom:24px">
+    <h1 style="font-size:20px;font-weight:700;letter-spacing:-0.03em;margin-bottom:4px">Painel Administrativo</h1>
+    <p style="font-size:13px;color:var(--ink2)">Visão geral da plataforma Fornext</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Fornecedores</div>
+      <div class="stat-num" id="stat-fornecedores">—</div>
+      <div class="stat-sub">cadastrados</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Compradores</div>
+      <div class="stat-num" id="stat-compradores">—</div>
+      <div class="stat-sub">cadastrados</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">RFQs</div>
+      <div class="stat-num" id="stat-rfqs">—</div>
+      <div class="stat-sub">enviadas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Propostas</div>
+      <div class="stat-num" id="stat-propostas">—</div>
+      <div class="stat-sub">recebidas</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('fornecedores',this)">Fornecedores</button>
+    <button class="tab" onclick="switchTab('compradores',this)">Compradores</button>
+    <button class="tab" onclick="switchTab('rfqs',this)">RFQs</button>
+    <button class="tab" onclick="switchTab('avaliacoes',this)">Avaliações</button>
+  </div>
+
+  <!-- FORNECEDORES -->
+  <div class="tab-content active" id="tab-fornecedores">
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Fornecedores cadastrados</div>
+        <div class="table-count" id="count-fornecedores">Carregando...</div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Categoria</th>
+            <th>Cidade</th>
+            <th>Nota</th>
+            <th>RFQs</th>
+            <th>Cadastro</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-fornecedores">
+          <tr><td colspan="7"><div class="skeleton"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- COMPRADORES -->
+  <div class="tab-content" id="tab-compradores">
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Compradores cadastrados</div>
+        <div class="table-count" id="count-compradores">Carregando...</div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Empresa</th>
+            <th>Cargo</th>
+            <th>Cidade</th>
+            <th>E-mail</th>
+            <th>Cadastro</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-compradores">
+          <tr><td colspan="6"><div class="skeleton"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- RFQS -->
+  <div class="tab-content" id="tab-rfqs">
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">RFQs enviadas</div>
+        <div class="table-count" id="count-rfqs">Carregando...</div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Categoria</th>
+            <th>Quantidade</th>
+            <th>Prazo</th>
+            <th>Status</th>
+            <th>Data</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-rfqs">
+          <tr><td colspan="6"><div class="skeleton"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- AVALIAÇÕES -->
+  <div class="tab-content" id="tab-avaliacoes">
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Avaliações recebidas</div>
+        <div class="table-count" id="count-avaliacoes">Carregando...</div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Fornecedor</th>
+            <th>Nota</th>
+            <th>Comentário</th>
+            <th>Data</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-avaliacoes">
+          <tr><td colspan="5"><div class="skeleton"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Proteção de rota
+const session = JSON.parse(localStorage.getItem('fornext_session')||'null');
+if(!session || session.tipo !== 'admin') window.location.href = 'login.html';
+
+const SUPABASE_URL = 'https://xnpvysulxouzxqdqhwuq.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucHZ5c3VseG91enhxZHFod3VxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzOTU0MjgsImV4cCI6MjA5NTk3MTQyOH0.dmQRu68NfNq2nSN3YAszVR9u7yf4YgyevindTBWIYV8';
+
+function formatDate(dt){ return new Date(dt).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}); }
+
+async function get(path){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{
+    headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+  });
+  return res.json();
+}
+
+async function del(table, id){
+  await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`,{
+    method:'DELETE',
+    headers:{'apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`}
+  });
+}
+
+async function carregar(){
+  const [fornecedores, compradores, rfqs, propostas, avaliacoes] = await Promise.all([
+    get('fornecedores?select=*&order=criado_em.desc'),
+    get('compradores?select=*&order=criado_em.desc'),
+    get('rfqs?select=*&order=criado_em.desc'),
+    get('propostas?select=id'),
+    get('avaliacoes?select=*,fornecedores(nome)&order=criado_em.desc')
+  ]);
+
+  // Stats
+  document.getElementById('stat-fornecedores').textContent = fornecedores.length;
+  document.getElementById('stat-compradores').textContent = compradores.length;
+  document.getElementById('stat-rfqs').textContent = rfqs.length;
+  document.getElementById('stat-propostas').textContent = propostas.length;
+
+  // Fornecedores
+  document.getElementById('count-fornecedores').textContent = `${fornecedores.length} registros`;
+  document.getElementById('tbody-fornecedores').innerHTML = fornecedores.length === 0
+    ? `<tr><td colspan="7" class="empty">Nenhum fornecedor cadastrado.</td></tr>`
+    : fornecedores.map(f=>`
+        <tr>
+          <td class="td-name">${f.nome}</td>
+          <td><span class="tag tag-blue">${f.categoria||'—'}</span></td>
+          <td>${f.cidade||'—'}${f.estado?', '+f.estado:''}</td>
+          <td>${f.avaliacao_media>0?`<span class="tag tag-green">★ ${f.avaliacao_media.toFixed(1)}</span>`:'—'}</td>
+          <td>${f.total_rfqs||0}</td>
+          <td>${formatDate(f.criado_em)}</td>
+          <td>
+            <button class="btn btn-ghost btn-sm" onclick="window.open('fornecedor.html?id=${f.id}','_blank')">Ver</button>
+            <button class="btn btn-red btn-sm" style="margin-left:4px" onclick="removerFornecedor('${f.id}','${f.nome.replace(/'/g,"\\'")}')">Remover</button>
+          </td>
+        </tr>`).join('');
+
+  // Compradores
+  document.getElementById('count-compradores').textContent = `${compradores.length} registros`;
+  document.getElementById('tbody-compradores').innerHTML = compradores.length === 0
+    ? `<tr><td colspan="6" class="empty">Nenhum comprador cadastrado.</td></tr>`
+    : compradores.map(c=>`
+        <tr>
+          <td class="td-name">${c.nome}</td>
+          <td>${c.empresa||'—'}</td>
+          <td>${c.cargo||'—'}</td>
+          <td>${c.cidade||'—'}${c.estado?', '+c.estado:''}</td>
+          <td>${c.email}</td>
+          <td>${formatDate(c.criado_em)}</td>
+        </tr>`).join('');
+
+  // RFQs
+  document.getElementById('count-rfqs').textContent = `${rfqs.length} registros`;
+  document.getElementById('tbody-rfqs').innerHTML = rfqs.length === 0
+    ? `<tr><td colspan="6" class="empty">Nenhuma RFQ enviada.</td></tr>`
+    : rfqs.map(r=>`
+        <tr>
+          <td class="td-name" style="font-family:monospace;font-size:11px">#${r.id.slice(0,8).toUpperCase()}</td>
+          <td>${r.categoria||'—'}</td>
+          <td>${r.quantidade||'—'}</td>
+          <td>${r.prazo||'—'}</td>
+          <td><span class="tag ${r.status==='fechada'?'tag-green':'tag-amber'}">${r.status}</span></td>
+          <td>${formatDate(r.criado_em)}</td>
+        </tr>`).join('');
+
+  // Avaliações
+  document.getElementById('count-avaliacoes').textContent = `${avaliacoes.length} registros`;
+  document.getElementById('tbody-avaliacoes').innerHTML = avaliacoes.length === 0
+    ? `<tr><td colspan="5" class="empty">Nenhuma avaliação ainda.</td></tr>`
+    : avaliacoes.map(a=>`
+        <tr>
+          <td class="td-name">${a.fornecedores?.nome||'—'}</td>
+          <td><span class="tag ${a.nota>=8?'tag-green':a.nota>=6?'tag-amber':'tag-red'}">★ ${a.nota}</span></td>
+          <td style="max-width:300px">${a.comentario||'—'}</td>
+          <td>${formatDate(a.criado_em)}</td>
+          <td><button class="btn btn-red btn-sm" onclick="removerAvaliacao('${a.id}')">Remover</button></td>
+        </tr>`).join('');
+}
+
+async function removerFornecedor(id, nome){
+  if(!confirm(`Remover o fornecedor "${nome}"? Esta ação não pode ser desfeita.`)) return;
+  await del('fornecedores', id);
+  carregar();
+}
+
+async function removerAvaliacao(id){
+  if(!confirm('Remover esta avaliação?')) return;
+  await del('avaliacoes', id);
+  carregar();
+}
+
+function switchTab(tab, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+function logout(){
+  localStorage.removeItem('fornext_session');
+  window.location.href = 'login.html';
+}
+
+carregar();
+</script>
+</body>
+</html>

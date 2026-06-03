@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fornext — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#2563eb;--indigo:#6366f1;--ink:#0f172a;--ink2:#64748b;--ink3:#94a3b8;--bg:#fff;--bg2:#f8fafc;--border:#e2e8f0;--border2:#cbd5e1;--red:#ef4444;--red-bg:#fef2f2;--r:8px;--font:'Inter',system-ui,sans-serif}
+body{font-family:var(--font);background:var(--bg2);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;-webkit-font-smoothing:antialiased}
+.box{width:100%;max-width:360px}
+.box-header{text-align:center;margin-bottom:28px}
+.logo{display:inline-flex;align-items:center;gap:8px;margin-bottom:20px}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#3b82f6,#6366f1);border-radius:9px;display:flex;align-items:center;justify-content:center}
+.logo-text{font-size:17px;font-weight:800;letter-spacing:-0.04em;color:var(--ink)}
+.box-header h1{font-size:20px;font-weight:700;color:var(--ink);letter-spacing:-0.03em;margin-bottom:6px}
+.box-header p{font-size:13px;color:var(--ink2)}
+.admin-badge{display:inline-flex;align-items:center;gap:6px;background:#eef2ff;border:1px solid #c7d2fe;border-radius:100px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--indigo);margin-bottom:16px}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.field label{font-size:11px;font-weight:600;color:var(--ink);letter-spacing:.02em}
+.field input{padding:10px 12px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg);color:var(--ink);font-size:13px;font-family:var(--font);outline:none;transition:border-color .15s;width:100%}
+.field input:focus{border-color:var(--indigo)}
+.field input::placeholder{color:var(--ink3)}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .15s;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;box-shadow:0 2px 12px rgba(99,102,241,.3)}
+.btn:hover{opacity:.9}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-box{background:var(--red-bg);border:1px solid #fecaca;border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:14px;display:none}
+.back{text-align:center;margin-top:16px;font-size:12px;color:var(--ink3)}
+.back a{color:var(--indigo);font-weight:600;text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="box">
+  <div class="box-header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="2" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+          <rect x="9" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+          <rect x="2" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+          <rect x="9" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+        </svg>
+      </div>
+      <span class="logo-text">Fornext</span>
+    </div>
+    <div class="admin-badge">⚙ Acesso Admin</div>
+    <h1>Painel Administrativo</h1>
+    <p>Acesso restrito aos administradores da plataforma.</p>
+  </div>
+
+  <div class="card">
+    <div class="error-box" id="error-box"></div>
+    <div class="field">
+      <label>E-mail</label>
+      <input type="email" id="email" placeholder="seu@email.com" onkeydown="if(event.key==='Enter') entrar()">
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="senha" placeholder="••••••••" onkeydown="if(event.key==='Enter') entrar()">
+    </div>
+    <button class="btn" id="btn" onclick="entrar()">
+      <span id="btn-text">Entrar no painel</span>
+    </button>
+  </div>
+
+  <div class="back"><a href="index.html">← Voltar ao site</a></div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://xnpvysulxouzxqdqhwuq.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhucHZ5c3VseG91enhxZHFod3VxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzOTU0MjgsImV4cCI6MjA5NTk3MTQyOH0.dmQRu68NfNq2nSN3YAszVR9u7yf4YgyevindTBWIYV8';
+const ADMIN_EMAIL = 'pedrotavareslannar@gmail.com';
+
+// Já está logado como admin?
+const existing = JSON.parse(localStorage.getItem('fornext_admin')||'null');
+if(existing?.access_token) window.location.href='admin.html';
+
+function showError(msg){ const el=document.getElementById('error-box'); el.textContent=msg; el.style.display='block'; }
+
+async function entrar(){
+  const email = document.getElementById('email').value.trim();
+  const senha = document.getElementById('senha').value;
+  const btn = document.getElementById('btn');
+  const btnText = document.getElementById('btn-text');
+
+  if(!email||!senha){ showError('Preencha e-mail e senha.'); return; }
+
+  btn.disabled=true;
+  btnText.innerHTML='<span class="spinner"></span> Entrando...';
+  document.getElementById('error-box').style.display='none';
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+      body: JSON.stringify({email, password:senha})
+    });
+    const data = await res.json();
+
+    if(!res.ok){ showError('E-mail ou senha incorretos.'); btn.disabled=false; btnText.textContent='Entrar no painel'; return; }
+
+    if(data.user.email !== ADMIN_EMAIL){ showError('Acesso não autorizado.'); btn.disabled=false; btnText.textContent='Entrar no painel'; return; }
+
+    localStorage.setItem('fornext_admin', JSON.stringify({
+      access_token: data.access_token,
+      user_id: data.user.id,
+      email: data.user.email
+    }));
+
+    window.location.href = 'admin.html';
+  } catch(e){ showError('Erro de conexão. Tente novamente.'); btn.disabled=false; btnText.textContent='Entrar no painel'; }
+}
+</script>
+</body>
+</html>

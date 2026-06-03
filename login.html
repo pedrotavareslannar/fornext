@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fornext — Entrar</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#2563eb;--blue-dark:#1e40af;--blue-bg:#eff6ff;--blue-border:#bfdbfe;
+  --ink:#111110;--ink2:#6b7280;--ink3:#9ca3af;
+  --bg:#ffffff;--bg2:#f9fafb;--bg3:#f3f4f6;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-border:#bbf7d0;
+  --red:#dc2626;--red-bg:#fef2f2;
+  --r:8px;--font:'Inter',system-ui,sans-serif;
+}
+body{font-family:var(--font);background:var(--bg2);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+nav{background:var(--bg);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 24px}
+.nav-logo{display:flex;align-items:center;gap:7px;text-decoration:none}
+.nav-logo-icon{width:28px;height:28px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.nav-logo-text{font-size:14px;font-weight:700;letter-spacing:-0.03em;color:var(--ink)}
+.nav-logo-text em{font-style:normal;color:var(--blue)}
+.page{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 24px}
+.box{width:100%;max-width:380px}
+.box-header{text-align:center;margin-bottom:28px}
+.box-icon{width:52px;height:52px;background:var(--blue);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px}
+.box-header h1{font-size:20px;font-weight:700;letter-spacing:-0.03em;margin-bottom:6px}
+.box-header p{font-size:13px;color:var(--ink2);line-height:1.6}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.field label{font-size:11px;font-weight:600;color:var(--ink);letter-spacing:.02em}
+.field input{padding:10px 12px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg);color:var(--ink);font-size:13px;font-family:var(--font);outline:none;transition:border-color .15s;width:100%}
+.field input:focus{border-color:var(--blue)}
+.field input::placeholder{color:var(--ink3)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 20px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:var(--font);transition:all .15s;width:100%}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-blue:hover{background:var(--blue-dark)}
+.btn-blue:disabled{opacity:.5;cursor:not-allowed}
+.error-box{background:var(--red-bg);border:1px solid #fecaca;border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:14px;display:none}
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <rect x="2" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+        <rect x="9" y="2" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+        <rect x="2" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".55"/>
+        <rect x="9" y="9" width="5" height="5" rx="1.2" fill="white" opacity=".9"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">For<em>next</em></span>
+  </a>
+</nav>
+<div class="page">
+  <div class="box">
+    <div class="box-header">
+      <div class="box-icon">🔐</div>
+      <h1>Entrar na Fornext</h1>
+      <p>Digite suas credenciais para acessar a plataforma</p>
+    </div>
+    <div class="card">
+      <div class="error-box" id="error-box">Usuário ou senha incorretos.</div>
+      <div class="field">
+        <label>Usuário</label>
+        <input type="text" id="usuario" placeholder="seu usuário" autofocus>
+      </div>
+      <div class="field">
+        <label>Senha</label>
+        <input type="password" id="senha" placeholder="sua senha" onkeydown="if(event.key==='Enter')entrar()">
+      </div>
+      <button class="btn btn-blue" id="btn-login" onclick="entrar()">
+        <span id="btn-text">Entrar</span>
+      </button>
+    </div>
+  </div>
+</div>
+<script>
+const USUARIOS = {
+  admin:      { senha: 'galodoido', tipo: 'admin',      redirect: 'admin.html' },
+  fornecedor: { senha: 'galodoido', tipo: 'fornecedor', redirect: 'painel-fornecedor.html' },
+  comprador:  { senha: 'galodoido', tipo: 'comprador',  redirect: 'propostas.html' }
+};
+
+function entrar(){
+  const usuario = document.getElementById('usuario').value.trim().toLowerCase();
+  const senha = document.getElementById('senha').value;
+  const btn = document.getElementById('btn-login');
+  const btnText = document.getElementById('btn-text');
+  const errorBox = document.getElementById('error-box');
+
+  btn.disabled = true;
+  btnText.innerHTML = '<span class="spinner"></span>';
+  errorBox.style.display = 'none';
+
+  setTimeout(() => {
+    const user = USUARIOS[usuario];
+    if(user && user.senha === senha){
+      localStorage.setItem('fornext_session', JSON.stringify({ usuario, tipo: user.tipo }));
+      window.location.href = user.redirect;
+    } else {
+      errorBox.style.display = 'block';
+      btn.disabled = false;
+      btnText.textContent = 'Entrar';
+    }
+  }, 600);
+}
+</script>
+</body>
+</html>

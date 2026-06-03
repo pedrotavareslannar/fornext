@@ -128,6 +128,13 @@ nav{background:var(--bg);border-bottom:1px solid var(--border);height:56px;displ
 </style>
 </head>
 <body>
+<script>
+(function(){
+  var s = JSON.parse(localStorage.getItem('fornext_session')||'null');
+  if(!s) window.location.href = 'login.html';
+})();
+</script>
+
 
 <nav>
   <div class="nav-inner">
@@ -145,7 +152,7 @@ nav{background:var(--bg);border-bottom:1px solid var(--border);height:56px;displ
     <span class="nav-tag">Painel Fornecedor</span>
     <div class="nav-actions">
       <a href="fornecedores.html" class="btn btn-ghost">Ver ranking</a>
-      <button class="btn btn-ghost" onclick="logout()" style="color:var(--red);border-color:var(--red)">Sair</button>
+      <button class="btn btn-ghost" onclick="localStorage.removeItem('fornext_session');window.location.href='login.html'">Sair</button>
     </div>
   </div>
 </nav>
@@ -436,10 +443,6 @@ async function enviarProposta(){
     btn.disabled=false;
     btnText.textContent='Enviar proposta';
   }
-}
-
-function logout(){
-  window.location.href = 'login-fornecedor.html';
 }
 
 carregarFornecedores();

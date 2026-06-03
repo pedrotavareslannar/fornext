@@ -262,7 +262,7 @@ async function entrar(){
     localStorage.setItem('comprador_id', compList[0]?.id||'');
     localStorage.setItem('comprador_nome', compList[0]?.nome||'');
 
-    window.location.href='propostas.html';
+    window.location.href = 'propostas.html';
 
   } catch(e){ showError('Erro de conexão. Tente novamente.'); btn.disabled=false; btnText.textContent='Entrar'; }
 }
