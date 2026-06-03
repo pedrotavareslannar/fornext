@@ -169,9 +169,15 @@ nav{background:var(--bg);border-bottom:1px solid var(--border);height:56px;displ
     <div class="card">
       <div class="card-title"><span class="card-title-icon">🏭</span>Informações da empresa</div>
       <div class="field-grid">
-        <div class="field">
-          <label>Nome da empresa <span>*</span></label>
-          <input type="text" id="nome" placeholder="Ex: Confecções Paulista Ltda">
+        <div class="field-grid field-grid-2">
+          <div class="field">
+            <label>Nome da empresa <span>*</span></label>
+            <input type="text" id="nome" placeholder="Ex: Confecções Paulista Ltda">
+          </div>
+          <div class="field">
+            <label>CNPJ <span>*</span></label>
+            <input type="text" id="cnpj" inputmode="numeric" maxlength="18" placeholder="00.000.000/0000-00">
+          </div>
         </div>
         <div class="field-grid field-grid-2">
           <div class="field">
@@ -318,6 +324,33 @@ document.querySelectorAll('.cat-option').forEach(opt => {
 
 function val(id) { return document.getElementById(id)?.value?.trim() || ''; }
 
+// CNPJ mask: 00.000.000/0000-00
+const cnpjInput = document.getElementById('cnpj');
+cnpjInput.addEventListener('input', () => {
+  let d = cnpjInput.value.replace(/\D/g, '').slice(0, 14);
+  d = d.replace(/^(\d{2})(\d)/, '$1.$2')
+       .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+       .replace(/\.(\d{3})(\d)/, '.$1/$2')
+       .replace(/(\d{4})(\d)/, '$1-$2');
+  cnpjInput.value = d;
+});
+
+// CNPJ validation (check digits)
+function validaCNPJ(cnpj) {
+  const c = cnpj.replace(/\D/g, '');
+  if (c.length !== 14 || /^(\d)\1{13}$/.test(c)) return false;
+  const calc = (len) => {
+    let sum = 0, pos = len - 7;
+    for (let i = len; i >= 1; i--) {
+      sum += +c[len - i] * pos--;
+      if (pos < 2) pos = 9;
+    }
+    const r = sum % 11;
+    return r < 2 ? 0 : 11 - r;
+  };
+  return calc(12) === +c[12] && calc(13) === +c[13];
+}
+
 function showStep(n) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   document.getElementById('step-' + n).classList.add('active');
@@ -335,10 +368,15 @@ function updateProgress(step) {
 function irStep1() { showStep(1); updateProgress(1); window.scrollTo(0,0); }
 
 function irStep2() {
-  const nome = val('nome'), email = val('email'), telefone = val('telefone');
+  const nome = val('nome'), cnpj = val('cnpj'), email = val('email'), telefone = val('telefone');
   const cidade = val('cidade'), estado = val('estado'), descricao = val('descricao');
-  if (!nome || !email || !telefone || !cidade || !estado || !descricao) {
+  if (!nome || !cnpj || !email || !telefone || !cidade || !estado || !descricao) {
     alert('Preencha todos os campos obrigatórios antes de continuar.');
+    return;
+  }
+  if (!validaCNPJ(cnpj)) {
+    alert('CNPJ inválido. Verifique os números informados.');
+    document.getElementById('cnpj').focus();
     return;
   }
   showStep(2); updateProgress(2); window.scrollTo(0,0);
@@ -363,6 +401,7 @@ async function salvarFornecedor() {
 
   const dados = {
     nome: val('nome'),
+    cnpj: val('cnpj'),
     email: val('email'),
     telefone: val('telefone'),
     cidade: val('cidade'),
@@ -390,7 +429,12 @@ async function salvarFornecedor() {
 
     if (!res.ok) {
       if (data?.code === '23505') {
-        alert('Este e-mail já está cadastrado na plataforma.');
+        const msg = (data?.message || '').toLowerCase();
+        if (msg.includes('cnpj')) {
+          alert('Este CNPJ já está cadastrado como fornecedor.');
+        } else {
+          alert('Este e-mail já está cadastrado na plataforma.');
+        }
       } else {
         alert('Erro ao salvar: ' + (data?.message || 'Tente novamente.'));
       }
